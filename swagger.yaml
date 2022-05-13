@@ -3,6 +3,7 @@ info:
   version: "1.0"
   title: "Local Shop Advisor"
   description: Documentazione delle API del progetto del corso di Ingegneria del Software
+host: localhost:8080
 basePath: /
 schemes:
   - https
@@ -62,6 +63,8 @@ definitions:
         type: string
       price:
         type: number
+        minimum: 0
+        maximum: 5000
       category:
         type: string
       tags:
