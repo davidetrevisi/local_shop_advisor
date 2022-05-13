@@ -44,4 +44,17 @@ router.get("", async (req, res) => {
   res.status(200).json(products);
 });
 
+//Ricerca singolo prodotto 
+
+router.get('/:id', async (req, res) => {
+    let product = await Product.findById(req.params.id);
+    res.status(200).json({
+        self: '/api/v1/products/' + product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        category: product.category
+    });
+});
+
 module.exports = router;
