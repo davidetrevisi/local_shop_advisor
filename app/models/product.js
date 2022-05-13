@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 // Schema dei prodotti: nome, descrizione, prezzo (0-5000), categoria, tags, immagini
@@ -23,14 +23,14 @@ const productSchema = new Schema({
     required: true,
   },
   tags: [String],
-  images: [
+  /*images: [
     // Da rivedere l'implementazione
     {
       data: Buffer,
       contentType: String,
       required: true,
     },
-  ],
+  ],*/
   // Nel caso servano in futuro
   // comments:
   // reviews:
