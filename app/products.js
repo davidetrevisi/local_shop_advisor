@@ -7,6 +7,7 @@ const Product = require("./models/product");
 
 //
 // PARTE DEI METODI REST DA INSERIRE QUI
+router.get('', async (req, res) => {
 //
 
 module.exports = router;
