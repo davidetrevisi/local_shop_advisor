@@ -2,11 +2,8 @@ swagger: "2.0"
 info:
   version: "1.0"
   title: "Local Shop Advisor"
-  description: Polls is a simple API allowing consumers to view polls and vote in them.
-  license:
-    name: MIT
-    url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
-host: polls.apiblueprint.org
+  description: Documentazione delle API del progetto del corso di Ingegneria del Software
+host: localhost:8080
 basePath: /
 schemes:
   - https
@@ -15,106 +12,71 @@ consumes:
 produces:
   - application/json
 paths:
-  /questions:
-    x-summary: Questions Collection
+  /api/v1/products:
+    x-summary: Collezione dei prodotti
     get:
-      summary: List All Questions
+      summary: Lista di tutti i prodotti
       responses:
         200:
-          description: Successful Response
+          description: Risposta elaborata correttamente
           schema:
             type: array
             items:
-              $ref: "#/definitions/Question"
+              $ref: "#/definitions/Product"
           examples:
             application/json:
-              - question: Favourite programming language?
-                published_at: "2015-08-05T08:40:51.620Z"
-                choices:
-                  - choice: Swift
-                    votes: 2048
-                  - choice: Python
-                    votes: 1024
-                  - choice: Objective-C
-                    votes: 512
-                  - choice: Ruby
-                    votes: 256
+              - name: Nome
+                description: Descrizione
+                price: 10
+                category: Abbigliamento
+                tags: Felpe, Tessuto
+                images: null
     post:
-      description: >-
-        You may create your own question using this action. It takes a JSON
-        object containing a question and a collection of answers in the
-        form of choices.
-      summary: Create a New Question
+      summary: Creazione di un nuovo prodotto
       parameters:
         - name: body
           in: body
           required: true
           schema:
-            $ref: "#/definitions/QuestionRequest"
+            $ref: "#/definitions/Product"
       responses:
         201:
           description: ""
           schema:
-            $ref: "#/definitions/Question"
+            $ref: "#/definitions/Product"
           examples:
             application/json:
-              question: Favourite programming language?
-              published_at: "2015-08-05T08:40:51.620Z"
-              choices:
-                - choice: Swift
-                  votes: 0
-                - choice: Python
-                  votes: 0
-                - choice: Objective-C
-                  votes: 0
-                - choice: Ruby
-                  votes: 0
+              name: Nome
+              description: Descrizione
+              price: 10
+              category: Abbigliamento
+              tags: Felpe, Tessuto
+              images: null
 definitions:
-  Question:
-    title: Question
+  Product:
+    title: Product
     type: object
     properties:
-      question:
+      name:
         type: string
-      published_at:
+      description:
         type: string
-      choices:
+      price:
+        type: number
+        minimum: 0
+        maximum: 5000
+      category:
+        type: string
+      tags:
         type: array
         items:
-          $ref: "#/definitions/Choice"
-    required:
-      - question
-      - published_at
-      - choices
-  Choice:
-    title: Choice
-    type: object
-    properties:
-      votes:
-        type: integer
-        format: int32
-      choice:
-        type: string
-    required:
-      - votes
-      - choice
-  QuestionRequest:
-    title: Question Request
-    type: object
-    properties:
-      question:
-        type: string
-      choices:
+          type: string
+      images:
         type: array
         items:
           type: string
     required:
-      - question
-      - choices
-    example:
-      question: Favourite programming language?
-      choices:
-        - Swift
-        - Python
-        - Objective-C
-        - Ruby
+      - name
+      - description
+      - price
+      - category
