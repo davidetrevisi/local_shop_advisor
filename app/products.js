@@ -57,4 +57,11 @@ router.get('/:id', async (req, res) => {
     });
 });
 
+//Eliminazione di un prodotto
+
+router.delete('/:id', async(req,res)=>{
+let product = await Product.findByIdAndRemove(req.params.id);
+res.status(204).json();
+console.log("Prodotto rimosso correttamente dal catalogo");
+});
 module.exports = router;
