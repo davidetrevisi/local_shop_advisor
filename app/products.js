@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-
+const mongoose = require("mongoose");
 // Importo il modello del prodotto dalla cartella models
 
 const Product = require("./models/product");
@@ -63,8 +63,26 @@ router.get("/:id", async (req, res) => {
 
 router.delete("/:id", async (req, res) => {
   let product = await Product.findByIdAndRemove(req.params.id);
-  res.status(204).json();
+  res.status(204).send();
   console.log("Prodotto rimosso correttamente dal catalogo");
 });
+
+
+//Ricerca di un prodotto per nome
+router.get("/:name", async (req, res) => {
+  let products = await Product.find({name: req.params.name});
+  products = products.map((product) => {
+    return {
+      self: "/api/v1/products/" + product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      category: product.category,
+      tags: product.tags,
+    };
+  });
+  res.status(200).json(products);
+});
+
 
 module.exports = router;
