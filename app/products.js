@@ -5,15 +5,15 @@ const router = express.Router();
 
 const Product = require("./models/product");
 
-//
 // Aggiunta di un prodotto al catalogo
+
 router.post("", async (req, res) => {
   let product = new Product({
     name: req.body.name,
     description: req.body.description,
     price: req.body.price,
     category: req.body.category,
-    // tag: req.body.tag,
+    tags: req.body.tags,
     // images: req.body.images
   });
 
@@ -28,7 +28,7 @@ router.post("", async (req, res) => {
     .send();
 });
 
-//Catalogo completo
+// Get catalogo completo
 
 router.get("", async (req, res) => {
   let products = await Product.find({});
@@ -39,29 +39,32 @@ router.get("", async (req, res) => {
       description: product.description,
       price: product.price,
       category: product.category,
+      tags: product.tags,
     };
   });
   res.status(200).json(products);
 });
 
-//Ricerca singolo prodotto 
+// Get singolo prodotto
 
-router.get('/:id', async (req, res) => {
-    let product = await Product.findById(req.params.id);
-    res.status(200).json({
-        self: '/api/v1/products/' + product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        category: product.category
-    });
+router.get("/:id", async (req, res) => {
+  let product = await Product.findById(req.params.id);
+  res.status(200).json({
+    self: "/api/v1/products/" + product.id,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    category: product.category,
+    tags: product.tags,
+  });
 });
 
-//Eliminazione di un prodotto
+// Eliminazione di un prodotto
 
-router.delete('/:id', async(req,res)=>{
-let product = await Product.findByIdAndRemove(req.params.id);
-res.status(204).json();
-console.log("Prodotto rimosso correttamente dal catalogo");
+router.delete("/:id", async (req, res) => {
+  let product = await Product.findByIdAndRemove(req.params.id);
+  res.status(204).json();
+  console.log("Prodotto rimosso correttamente dal catalogo");
 });
+
 module.exports = router;
