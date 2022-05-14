@@ -69,7 +69,7 @@ router.delete("/:id", async (req, res) => {
 
 
 //Ricerca di un prodotto per nome
-router.get("/:name", async (req, res) => {
+router.get("/find/:name", async (req, res) => {
   let products = await Product.find({name: req.params.name});
   products = products.map((product) => {
     return {
