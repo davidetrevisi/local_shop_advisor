@@ -1,4 +1,5 @@
 const express = require("express");
+const res = require("express");
 const app = express();
 
 const products = require("./products.js");
@@ -10,7 +11,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Parte statica del frontend
 
-// app.use("/", express.static("static"));
+app.use("/", express.static("static"));
 
 // Routing delle risorse con il versioning delle API
 
