@@ -1,29 +1,25 @@
 <!DOCTYPE html>
 <html>
-  <head> </head>
 
-  <body>
-    <h1>pagina di inserimento prodotti</h1>
+<head>
+</head>
 
-    <h2>Inserisci nuovo prodotto:</h2>
+<body>
 
-    <form
-      action="api/v1/products"
-      method="post"
-      name="inserimentoProdotto"
-      id="inserimentoProdotto"
-    >
-      <input name="name" value="nome" id="nomeProdotto" />
-      <input name="description" value="descrizione" id="descrizioneProdotto" />
-      <input name="price" value="prezzo" id="prezzoProdotto" />
-      <input name="category" value="categoria" id="categoriaProdotto" />
-      <input name="tags" value="tags" id="tagsProdotto" />
-      <button type="button" onclick="inserimento()">Inserisci prodotto</button>
+    <h1>Pagina di login</h1>
+
+    <h2>Inserisci dati per eseguire il login:</h2>
+
+    <form action="api/v1/utenti" method="post" name="loginform" id="loginform">
+        <input name="email" value="email" id="email" />
+        <input name="password" value="password" id="password" />
+        <button type="button" onclick="location.href='home.html'">Login</button>
     </form>
 
-    <h2>Stato inserimento</h2>
-    <ul id="statoInserimento"></ul>
+
 
     <script src="script.js"></script>
-  </body>
+
+</body>
+
 </html>

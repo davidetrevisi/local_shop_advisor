@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+
+    <h1>Catalogo</h1>
+
+    <h2>Cerca prodotto:</h2>
+
+    <form action="api/v1/products" method="post" name="inserimentoProdotto" id="inserimentoProdotto">
+        <input name="nome" value="nome" id="nomeProdotto" />
+        <button type="button" onclick="ricerca()">Cerca</button>
+    </form>
+
+    <h2>Prodotti trovati:</h2>
+    <ul id="statoInserimento"></ul>>
+
+    <h2>Torna alla home</h2>
+
+    <button type="button" onclick="location.href='home.html'">HOME</button>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

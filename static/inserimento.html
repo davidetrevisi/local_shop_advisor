@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+
+    <h1>pagina di inserimento prodotti</h1>
+
+    <h2>Inserisci nuovo prodotto:</h2>
+
+    <form action="api/v1/products" method="post" name="inserimentoProdotto" id="inserimentoProdotto">
+        <input name="nome" value="nome" id="nomeProdotto" />
+        <input name="descrizione" value="descrizione" id="descrizioneProdotto" />
+        <input name="prezzo" value="prezzo" id="prezzoProdotto" />
+        <input name="categoria" value="categoria" id="categoriaProdotto" />
+        <button type="button" onclick="inserimento()">Inserisci prodotto</button>
+    </form>
+
+    <h2>Stato inserimento</h2>
+    <ul id="statoInserimento"></ul>>
+
+    <h2>Torna alla home</h2>
+
+    <button type="button" onclick="location.href='home.html'">HOME</button>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
