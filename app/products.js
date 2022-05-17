@@ -123,7 +123,7 @@ router.get("/find/:name", async (req, res) => {
 
 //Modifica di un prodotto
 router.put("/:id", async (req, res) => {
-  let product = await Product.findOneAndUpdate(req.params.id, {name: req.body.name,  description: req.body.description, price: req.body.price, category: req.body.category, tags: req.body.tags} );
+  let product = await Product.findOneAndUpdate(req.params.id, {name: req.body.name,  description: req.body.description, price: req.body.price, category: req.body.category, tags: req.body.tags, images: req.files.map((file) => file.path)} );
   let productId = product.id;
   console.log("Prodotto modificato correttamente");
   res
