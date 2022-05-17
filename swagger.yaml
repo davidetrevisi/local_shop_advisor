@@ -75,6 +75,21 @@ paths:
           description: Prodotto rimosso correttamente
         404:
           description: Error not found
+  /products/find/{name}:
+    get:
+      summary: Ricerca di un prodotto per nome
+      parameters:
+        - in: path
+          name: name
+          required: true
+          type: string
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            $ref: "#/definitions/Product"
+        404:
+          description: Error not found
 definitions:
   Product:
     type: object
