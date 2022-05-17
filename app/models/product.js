@@ -23,13 +23,7 @@ const productSchema = new Schema({
     required: true,
   },
   tags: [String],
-  images: [
-    // Da rivedere l'implementazione
-    {
-      data: Buffer,
-      contentType: String,
-    },
-  ],
+  images: [String],
   // Nel caso servano in futuro
   // comments:
   // reviews:
