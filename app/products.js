@@ -84,5 +84,14 @@ router.get("/find/:name", async (req, res) => {
   res.status(200).json(products);
 });
 
-
+//Modifica di un prodotto
+router.put("/:id", async (req, res) => {
+  let product = await Product.findOneAndUpdate(req.params.id, {name: req.body.name,  description: req.body.description, price: req.body.price, category: req.body.category, tags: req.body.tags} );
+  let productId = product.id;
+  console.log("Prodotto modificato correttamente");
+  res
+    .location("/api/v1/products/" + productId)
+    .status(200)
+    .send(); 
+});
 module.exports = router;
