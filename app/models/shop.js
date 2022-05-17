@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const Product = require("./product");
-// Schema dei prodotti: nome, descrizione, prezzo (0-5000), categoria, tags, immagini
+
 // nome, posizione, categoria e tag, descrizione e immagini
 const shopSchema = new Schema({
   name: {
@@ -19,6 +19,9 @@ const shopSchema = new Schema({
   category: {
     type: String,
     required: true,
+  },
+  products: {
+    type: Product.schema,
   },
   tags: [String],
   images: [String],
