@@ -3,6 +3,7 @@ const app = express();
 
 const products = require("./products.js");
 const images = require("./images.js");
+const shops = require("./shops.js");
 
 // Middleware di express per il parsing
 
@@ -17,6 +18,7 @@ app.use('/images', express.static('./images'));
 // Routing delle risorse con il versioning delle API
 
 app.use("/api/v1/products", images, products);
+app.use("/api/v1/shops", images, shops);
 //...
 
 // Handler per gli errori
