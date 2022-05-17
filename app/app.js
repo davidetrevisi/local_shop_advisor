@@ -1,10 +1,13 @@
 const express = require("express");
 const res = require("express");
 const app = express();
+const cors = require('cors')
 
 const products = require("./products.js");
 
 // Middleware di express per il parsing
+
+app.use(cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

@@ -27,6 +27,14 @@ function inserimento() {
         .catch((error) => console.error(error)); // If there is any error you will catch them here
 }
 
+function rimozione() {
+
+};
+
+function ricerca() {
+
+};
+
 //funzione per lo stato inserimento
 
 function stato() {
