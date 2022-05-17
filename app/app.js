@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 
 const products = require("./products.js");
+const authentications = require("./authentications.js");
 
 // Middleware di express per il parsing
 
@@ -15,6 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 // Routing delle risorse con il versioning delle API
 
 app.use("/api/v1/products", products);
+
+app.use("/api/v1/authentications", authentications);
 //...
 
 // Handler per gli errori
