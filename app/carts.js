@@ -81,7 +81,6 @@ router.post("", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
 
-    //const userId = "5de7ffa74fff640a0491bc4f"; //TODO: the logged in user id
     let cart = await Cart.findOne({ userId: req.params.id });
     res.status(200).json({
         self: "/api/v1/carts/" + cart.id,

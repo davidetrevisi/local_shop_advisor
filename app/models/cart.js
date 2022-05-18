@@ -30,8 +30,8 @@ module.exports = mongoose.model("Item", ItemSchema);
 const CartSchema = new Schema(
     {
         userId: {
-            type: String //mongoose.Schema.Types.ObjectId,
-            //ref: "User",
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
         },
 
         items: [ItemSchema],
