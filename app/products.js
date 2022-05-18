@@ -1,4 +1,4 @@
-import express from "express";
+const express = require("express");
 const router = express.Router();
 
 // Importo il modello del prodotto dalla cartella models

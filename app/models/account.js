@@ -30,8 +30,22 @@ const accountSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
   },
   password: {
+    type: String,
+    required: true,
+  },
+});
+
+// Schema del profilo dell'admin: Account (email, password), nome, cognome
+
+const adminSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  surname: {
     type: String,
     required: true,
   },
@@ -70,7 +84,7 @@ const clientSchema = new Schema(
     },
   },
   {
-    discriminatorKey: "userCliente",
+    //discriminatorKey: "userCliente",
   }
 );
 
@@ -103,13 +117,14 @@ const sellerSchema = new Schema(
     },
   },
   {
-    discriminatorKey: "userVenditore",
+    //discriminatorKey: "userVenditore",
   }
 );
 
 // Creo i modelli degli account dagli schemi
 
 const Account = mongoose.model("Account", accountSchema);
+const Admin = Account.discriminator("Admin", adminSchema);
 const Cliente = Account.discriminator("Cliente", clientSchema);
 const Venditore = Account.discriminator("Venditore", sellerSchema);
 
@@ -117,6 +132,7 @@ const Venditore = Account.discriminator("Venditore", sellerSchema);
 
 module.exports = {
   Account,
+  Admin,
   Cliente,
   Venditore,
 };
