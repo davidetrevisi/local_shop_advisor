@@ -143,21 +143,6 @@ paths:
             type: file
         404:
           description: Error not found
-    /carts/{userId}:
-    get:
-      summary: Visualizzazione prodotti nel carrello
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          type: string
-      responses:
-        200:
-          description: Risposta elaborata correttamente
-          schema:
-            type: array
-            items:
-              $ref: "#/definitions/Cart"
   /carts:
     post:
       summary: Aggiunta di un prodotto al carrello
@@ -181,6 +166,29 @@ paths:
                 price: 16
                 total: 80
               subTotal: 80
+  /carts/{userId}:
+    get:
+      summary: Visualizzazione prodotti nel carrello
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          type: string
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema: 
+            $ref: "#/definitions/Cart"
+          examples:
+            application/json:
+              userId: 3232445
+              items:
+                productId: 32423f3
+                quantity: 5
+                price: 16
+                total: 80
+              subTotal: 80
+              
 definitions:
   Product:
     type: object
@@ -248,4 +256,4 @@ definitions:
     example:
       userId: 32423f3
       itemId: 231432fwd45
-      subTotal: 0
+      quantity: 0
