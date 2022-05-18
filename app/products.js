@@ -41,6 +41,7 @@ router.post("", async (req, res) => {
   let productId = product.id;
 
   console.log("Prodotto aggiunto correttamente al catalogo");
+  console.log(productId);
   res
     .location("/api/v1/products/" + productId)
     .status(201)
@@ -59,7 +60,7 @@ router.get("", async (req, res) => {
       price: product.price,
       category: product.category,
       tags: product.tags,
-      images: product.images,
+      //images: product.images,
     };
   });
   res.status(200).json(products);
@@ -76,7 +77,7 @@ router.get("/:id", async (req, res) => {
     price: product.price,
     category: product.category,
     tags: product.tags,
-    images: product.images,
+    //images: product.images,
   });
 });
 
@@ -123,9 +124,10 @@ router.get("/find/:name", async (req, res) => {
 
 //Modifica di un prodotto
 router.put("/:id", async (req, res) => {
-  let product = await Product.findOneAndUpdate(req.params.id, { name: req.body.name, description: req.body.description, price: req.body.price, category: req.body.category, tags: req.body.tags, images: req.files.map((file) => file.path) });
+  let product = await Product.findOneAndUpdate(req.params.id, { name: req.body.name, description: req.body.description, price: req.body.price, category: req.body.category,/* tags: req.body.tags, images: req.files.map((file) => file.path)*/ });
   let productId = product.id;
   console.log("Prodotto modificato correttamente");
+  console.log(productId);
   res
     .location("/api/v1/products/" + productId)
     .status(200)
