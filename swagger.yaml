@@ -25,13 +25,41 @@ paths:
         404:
           description: Error not found
     post:
+      consumes:
+        - multipart/form-data
+        - application/json
       summary: Creazione di un nuovo prodotto
       parameters:
         - in: body
           name: product
           required: true
+          description: I parametri del prodotto da creare
           schema:
             $ref: "#/definitions/Product"
+        - in: formData
+          name: images1
+          type: file
+          description: L'immagine da caricare (png, jpg, jpeg)
+        - in: formData
+          name: images2
+          type: file
+          description: L'immagine da caricare (png, jpg, jpeg)
+        - in: formData
+          name: images3
+          type: file
+          description: L'immagine da caricare (png, jpg, jpeg)
+        - in: formData
+          name: images4
+          type: file
+          description: L'immagine da caricare (png, jpg, jpeg)
+        - in: formData
+          name: images5
+          type: file
+          description: L'immagine da caricare (png, jpg, jpeg)
+        - in: formData
+          name: images6
+          type: file
+          description: L'immagine da caricare (png, jpg, jpeg)
       responses:
         201:
           description: OK
@@ -46,6 +74,9 @@ paths:
               tags:
                 - Abbigliamento
                 - Felpe
+              images:
+                - images//image.jpg
+                - images//image2.jpg
         404:
           description: Error not found
   /products/{productId}:
@@ -56,6 +87,7 @@ paths:
           name: productId
           required: true
           type: string
+          description: L'id del prodotto da cercare
       responses:
         200:
           description: Risposta elaborata correttamente
@@ -70,9 +102,33 @@ paths:
           name: productId
           required: true
           type: string
+          description: L'id del prodotto da eliminare
       responses:
         204:
           description: Prodotto rimosso correttamente
+        400:
+          description: Cannot delete images
+        404:
+          description: Error not found
+    put:
+      summary: Modifica di un prodotto
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          type: string
+          description: L'id del prodotto da modificare
+        - in: body
+          name: product
+          required: true
+          description: I nuovi valori del prodotto da modificare
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        200:
+          description: Prodotto modificato correttamente
+          schema:
+            $ref: "#/definitions/Product"
         404:
           description: Error not found
   /products/find/{name}:
@@ -83,11 +139,32 @@ paths:
           name: name
           required: true
           type: string
+          description: Il nome del prodotto da cercare
       responses:
         200:
           description: Risposta elaborata correttamente
           schema:
             $ref: "#/definitions/Product"
+        404:
+          description: Error not found
+  /images/{id}:
+    get:
+      summary: Static route per le immagini
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+          description: Id dell'immagine da ottenere
+      produces:
+        - image/png
+        - image/jpg
+        - image/jpeg
+      responses:
+        200:
+          description: Immagine
+          schema:
+            type: file
         404:
           description: Error not found
 definitions:
@@ -108,10 +185,10 @@ definitions:
         type: array
         items:
           type: string
-      #images:
-      #  type: array
-      #  items:
-      #    type: string
+      images:
+        type: array
+        items:
+          type: string
     required:
       - name
       - description
@@ -125,3 +202,6 @@ definitions:
       tags:
         - Abbigliamento
         - Felpe
+      images:
+        - images//image.jpg
+        - images//image2.jpg

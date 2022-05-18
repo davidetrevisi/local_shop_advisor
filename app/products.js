@@ -94,7 +94,8 @@ router.delete("/:id", async (req, res) => {
 
   deleteFiles(product.images, function (err) {
     if (err) {
-      console.log(err);
+      res.status(400).send();
+      console.log("Cannot delete images");
     } else {
       console.log("All images removed");
     }
@@ -117,6 +118,7 @@ router.get("/find/:name", async (req, res) => {
       price: product.price,
       category: product.category,
       tags: product.tags,
+      //images: product.images,
     };
   });
   res.status(200).json(products);
