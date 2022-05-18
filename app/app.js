@@ -4,6 +4,7 @@ const cors = require('cors');
 
 const products = require("./products.js");
 const images = require("./images.js");
+const carts = require("./carts.js");
 
 // Middleware di express per il parsing
 
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/", express.static("static"));
 app.use('/images', express.static('./images'));
+app.use("/api/v1/carts", carts);
 
 // Routing delle risorse con il versioning delle API
 
