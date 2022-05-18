@@ -33,33 +33,9 @@ paths:
         - in: body
           name: product
           required: true
-          description: I parametri del prodotto da creare
+          description: I parametri del prodotto da creare + immagini da caricare
           schema:
             $ref: "#/definitions/Product"
-        - in: formData
-          name: images1
-          type: file
-          description: L'immagine da caricare (png, jpg, jpeg)
-        - in: formData
-          name: images2
-          type: file
-          description: L'immagine da caricare (png, jpg, jpeg)
-        - in: formData
-          name: images3
-          type: file
-          description: L'immagine da caricare (png, jpg, jpeg)
-        - in: formData
-          name: images4
-          type: file
-          description: L'immagine da caricare (png, jpg, jpeg)
-        - in: formData
-          name: images5
-          type: file
-          description: L'immagine da caricare (png, jpg, jpeg)
-        - in: formData
-          name: images6
-          type: file
-          description: L'immagine da caricare (png, jpg, jpeg)
       responses:
         201:
           description: OK
