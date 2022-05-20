@@ -1,9 +1,11 @@
 const express = require("express");
 const app = express();
+const cors = require('cors')
 
 const products = require("./products.js");
 const images = require("./images.js");
 const shops = require("./shops.js");
+app.use(cors())
 
 // Middleware di express per il parsing
 
