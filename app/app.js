@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const products = require("./products.js");
 const images = require("./images.js");
+const shops = require("./shops.js");
 
 const authentications = require("./authentications.js");
 
@@ -26,6 +27,7 @@ app.use('/images', express.static('./images'));
 
 app.use("/api/v1/authentications", authentications);
 app.use("/api/v1/products", images, products);
+app.use("/api/v1/shops", images, shops);
 //...
 
 // Handler per gli errori
