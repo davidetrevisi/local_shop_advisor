@@ -7,7 +7,7 @@ var Account = require("./app/models/account").Account;
 Account.remove()
   .then(() => {
     var admin = new Admin({
-      email: "admin1@admin.com",
+      email: "admin@admin.com",
       password: "admin",
       name: "admin",
       surname: "admin",
