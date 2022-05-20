@@ -108,7 +108,7 @@ router.delete("/:id", async (req, res) => {
 
 //Modifica di un negozio
 router.put("/:id", async (req, res) => {
-  let shop = await Shop.findOneAndUpdate(req.params.id, {name: req.body.name,  description: req.body.description, position: req.body.position, category: req.body.category, tags: req.body.tags, images: req.files.map((file) => file.path)} );
+  let shop = await Shop.findByIdAndUpdate(req.params.id, {name: req.body.name,  description: req.body.description, position: req.body.position, category: req.body.category, tags: req.body.tags, images: req.files.map((file) => file.path)} );
   let shopId = shop.id;
   console.log("Negozio modificato correttamente");
   res
