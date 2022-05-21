@@ -60,6 +60,7 @@ router.get("", async (req, res) => {
       price: product.price,
       category: product.category,
       tags: product.tags,
+      id: product.id
       //images: product.images,
     };
   });
