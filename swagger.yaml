@@ -25,11 +25,15 @@ paths:
         404:
           description: Error not found
     post:
+      consumes:
+        - multipart/form-data
+        - application/json
       summary: Creazione di un nuovo prodotto
       parameters:
         - in: body
           name: product
           required: true
+          description: I parametri del prodotto da creare + immagini da caricare
           schema:
             $ref: "#/definitions/Product"
       responses:
@@ -46,6 +50,9 @@ paths:
               tags:
                 - Abbigliamento
                 - Felpe
+              images:
+                - images//image.jpg
+                - images//image2.jpg
         404:
           description: Error not found
   /products/{productId}:
@@ -56,6 +63,7 @@ paths:
           name: productId
           required: true
           type: string
+          description: L'id del prodotto da cercare
       responses:
         200:
           description: Risposta elaborata correttamente
@@ -70,9 +78,33 @@ paths:
           name: productId
           required: true
           type: string
+          description: L'id del prodotto da eliminare
       responses:
         204:
           description: Prodotto rimosso correttamente
+        400:
+          description: Cannot delete images
+        404:
+          description: Error not found
+    put:
+      summary: Modifica di un prodotto
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          type: string
+          description: L'id del prodotto da modificare
+        - in: body
+          name: product
+          required: true
+          description: I nuovi valori del prodotto da modificare
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        200:
+          description: Prodotto modificato correttamente
+          schema:
+            $ref: "#/definitions/Product"
         404:
           description: Error not found
   /products/find/{name}:
@@ -83,6 +115,7 @@ paths:
           name: name
           required: true
           type: string
+          description: Il nome del prodotto da cercare
       responses:
         200:
           description: Risposta elaborata correttamente
@@ -90,6 +123,72 @@ paths:
             $ref: "#/definitions/Product"
         404:
           description: Error not found
+  /images/{id}:
+    get:
+      summary: Static route per le immagini
+      parameters:
+        - in: path
+          name: id
+          required: true
+          type: string
+          description: Id dell'immagine da ottenere
+      produces:
+        - image/png
+        - image/jpg
+        - image/jpeg
+      responses:
+        200:
+          description: Immagine
+          schema:
+            type: file
+        404:
+          description: Error not found
+  /carts:
+    post:
+      summary: Aggiunta di un prodotto al carrello
+      parameters:
+        - in: body
+          name: cart
+          required: true
+          schema:
+            $ref: "#/definitions/Cart"
+      responses:
+        200:
+          description: Add to Cart successfully!
+          schema:
+            $ref: "#/definitions/Cart"
+          examples:
+            application/json:
+              userId: 3232445
+              items:
+                productId: 32423f3
+                quantity: 5
+                price: 16
+                total: 80
+              subTotal: 80
+  /carts/{userId}:
+    get:
+      summary: Visualizzazione prodotti nel carrello
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          type: string
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema: 
+            $ref: "#/definitions/Cart"
+          examples:
+            application/json:
+              userId: 3232445
+              items:
+                productId: 32423f3
+                quantity: 5
+                price: 16
+                total: 80
+              subTotal: 80
+              
 definitions:
   Product:
     type: object
@@ -108,10 +207,10 @@ definitions:
         type: array
         items:
           type: string
-      #images:
-      #  type: array
-      #  items:
-      #    type: string
+      images:
+        type: array
+        items:
+          type: string
     required:
       - name
       - description
@@ -125,3 +224,36 @@ definitions:
       tags:
         - Abbigliamento
         - Felpe
+      images:
+        - images//image.jpg
+        - images//image2.jpg
+  Item:
+    type: object
+    properties:
+      productId:
+        type: object
+      quantity:
+        type: number
+        minimum: 1
+      price:
+        type: number
+      total:
+        type: number
+    example:
+      productId: 32423f3
+      quantity: 5
+      price: 16
+      total: 80
+  Cart:
+    type: object
+    properties:
+      userId:
+        type: object
+      items:
+        type: object
+      subTotal:
+        type: number
+    example:
+      userId: 32423f3
+      itemId: 231432fwd45
+      quantity: 0

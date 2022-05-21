@@ -40,6 +40,13 @@ const CartSchema = new Schema(
       type: Number,
     },
   },
+
+  items: [ItemSchema],
+
+  subTotal: {
+  default: 0,
+  type: Number,
+},
   {
     timestamps: true,
   }
