@@ -205,11 +205,98 @@ router.get("/users", tokenChecker, async (req, res) => {
   }
 });
 
+// Get utente singolo
+
+router.get("/users/:id", tokenChecker, async (req, res) => {
+  let user = await Account.findById(req.params.id)
+    .populate("personal_address")
+    .populate("shipping_address")
+    .populate("billing_address");
+
+  if (req.userAccount == "Venditore") {
+    res.status(200).json({
+      self: "/api/v1/authentications/users/" + user.id,
+      email: user.email,
+      password: user.password,
+      name: user.name,
+      surname: user.surname,
+      phone: user.phone,
+      birthdate: user.birthdate,
+      personal_address: user.personal_address,
+    });
+  } else if (req.userAccount == "Cliente") {
+    res.status(200).json({
+      self: "/api/v1/authentications/users/" + user.id,
+      email: user.email,
+      password: user.password,
+      name: user.name,
+      surname: user.surname,
+      phone: user.phone,
+      birthdate: user.birthdate,
+      payment: user.payment,
+      shipping_address: user.shipping_address,
+      billing_address: user.billing_address,
+    });
+  } else {
+    res.status(200).json({
+      self: "/api/v1/authentications/users/" + user.id,
+      email: user.email,
+      password: user.password,
+      name: user.name,
+      surname: user.surname,
+    });
+  }
+});
+
 // Eliminazione di un account
 
 router.delete("/users/:id", tokenChecker, async (req, res) => {
   if (req.userAccount == "Admin") {
-    let product = await Account.findByIdAndRemove(req.params.id);
+    let user = await Account.findById(req.params.id);
+    var temp_user = user;
+
+    if (!user) {
+      res.status(404).send();
+      console.log("User not found");
+      return;
+    }
+
+    await user.deleteOne();
+
+    if (temp_user.__t == "Cliente") {
+      let other_users = await Cliente.find({
+        $or: [
+          { shipping_address: temp_user.shipping_address },
+          { billing_address: temp_user.shipping_address },
+        ],
+      });
+
+      let temp_addr;
+
+      if (!other_users) {
+        temp_addr = Address.findByIdAndDelete(temp_user.shipping_address);
+      }
+
+      other_users = await Cliente.find({
+        $or: [
+          { shipping_address: temp_user.billing_address },
+          { billing_address: temp_user.billing_address },
+        ],
+      });
+
+      if (!other_users) {
+        temp_addr = Address.findByIdAndDelete(temp_user.billing_address);
+      }
+    } else if (user.__t == "Venditore") {
+      let other_users = await Venditore.find({
+        $or: [{ personal_address: temp_user.personal_address }],
+      });
+
+      if (!other_users) {
+        let temp_addr = Address.findByIdAndDelete(temp_user.personalS_address);
+      }
+    }
+
     console.log("Account rimosso correttamente dal catalogo");
     res.status(204).send();
   }

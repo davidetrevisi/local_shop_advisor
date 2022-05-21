@@ -24,8 +24,6 @@ const addressSchema = new Schema({
   },
 });
 
-addressSchema.index({ street: 1, number: 1, CAP: 1, city: 1 }, { unique: true });
-
 // Schema dell'account generico: email, password
 
 const accountSchema = new Schema({

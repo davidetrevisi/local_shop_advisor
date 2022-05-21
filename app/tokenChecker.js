@@ -21,6 +21,7 @@ const tokenChecker = function (req, res, next) {
       });
     } else {
       req.userId = decoded.id;
+      req.email = decoded.email;
       req.userAccount = decoded.account;
       next();
     }
