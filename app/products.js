@@ -55,6 +55,7 @@ router.get("", async (req, res) => {
   products = products.map((product) => {
     return {
       self: "/api/v1/products/" + product.id,
+      id: product.id,
       name: product.name,
       description: product.description,
       price: product.price,
@@ -72,6 +73,7 @@ router.get("/:id", async (req, res) => {
   let product = await Product.findById(req.params.id);
   res.status(200).json({
     self: "/api/v1/products/" + product.id,
+    id: product.id,
     name: product.name,
     description: product.description,
     price: product.price,
@@ -113,6 +115,7 @@ router.get("/find/:name", async (req, res) => {
   products = products.map((product) => {
     return {
       self: "/api/v1/products/" + product.id,
+      id: product.id,
       name: product.name,
       description: product.description,
       price: product.price,
