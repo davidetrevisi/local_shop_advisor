@@ -6,9 +6,9 @@
  
  describe('GET /api/v1/carts', () => {
  
-   // Moking Product.find method
+
    let cartSpy;
-   // Moking Product.findById method
+
  
    beforeAll( () => {
      const Cart = require('./models/cart');
@@ -17,7 +17,7 @@
        return {
         self: "/api/v1/carts/" + cart.id,
         user: '33',
-        items: 'Felpa',
+        items: ['Felpa','Felpona'],
         subTotal: 10,
        };
        else
@@ -36,7 +36,7 @@
        .expect(200, {
         self: "/api/v1/carts/" + cart.id,
         user: '33',
-        items: 'Felpa',
+        items: ['Felpa','Felpona'],
         subTotal: 10,
          });
    });
