@@ -48,7 +48,10 @@ router.post("/login", async function (req, res) {
     var token = jwt.sign(payload, process.env.SUPER_SECRET, options);
 
     res
-      .cookie("token", token, {})
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: false,
+      })
       .status(200)
       .json({
         success: true,
@@ -59,6 +62,7 @@ router.post("/login", async function (req, res) {
         id: user._id,
         self: "api/v1/authentication/" + user._id,
       });
+    console.log("Token emesso!");
   }
 });
 
