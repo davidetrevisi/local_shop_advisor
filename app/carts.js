@@ -81,14 +81,24 @@ router.post("", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
 
-    //const userId = "5de7ffa74fff640a0491bc4f"; //TODO: the logged in user id
     let cart = await Cart.findOne({ userId: req.params.id });
+    if (cart) {
     res.status(200).json({
         self: "/api/v1/carts/" + cart.id,
         user: cart.userId,
         items: cart.items,
         subTotal: cart.subTotal,
-    });
+    });}
+    else {
+        
+        cart = new Cart();
+        data = await cart.save();
+        res.status(200).send({
+            code: 200,
+            message: "Cart created!",
+            data: data
+        });    }
+
 });
 
 

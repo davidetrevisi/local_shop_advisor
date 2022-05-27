@@ -33,7 +33,7 @@ router.post("", async (req, res) => {
     position: req.body.position,
     category: req.body.category,
     tags: req.body.tags,
-    images: req.files.map((file) => file.path),
+   // images: req.files.map((file) => file.path),
   });
 
   shop = await shop.save();
