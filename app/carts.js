@@ -91,19 +91,28 @@ router.post("", tokenChecker, async (req, res) => {
     });
   }
 });
+router.get("/:id", async (req, res) => {
+    var user_type = JSON.stringify(req.account);
 
-router.get("/:id", tokenChecker, async (req, res) => {
-  var user_type = JSON.stringify(req.account);
-
-  if (user_type.toLowerCase().indexOf("cliente") === 1) {
-    let cart = await Cart.findOne({ userId: req.userId });
+    if (user_type.toLowerCase().indexOf("cliente") === 1) {
+    let cart = await Cart.findOne({ userId: req.params.id });
+    if (cart) {
     res.status(200).json({
-      self: "/api/v1/carts/" + cart.id,
-      user: cart.userId,
-      items: cart.items,
-      subTotal: cart.subTotal,
-    });
-  }
+        self: "/api/v1/carts/" + cart.id,
+        user: cart.userId,
+        items: cart.items,
+        subTotal: cart.subTotal,
+    });}
+    else {
+        
+        cart = new Cart();
+        data = await cart.save();
+        res.status(200).send({
+            code: 200,
+            message: "Cart created!",
+            data: data
+        });    }}
+
 });
 
 module.exports = router;
