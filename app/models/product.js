@@ -24,6 +24,9 @@ const productSchema = new Schema({
   },
   tags: [String],
   images: [String],
+  userId: {
+    type: String,
+},
   // Nel caso servano in futuro
   // comments:
   // reviews:

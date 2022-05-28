@@ -33,6 +33,7 @@ router.post("", async (req, res) => {
     position: req.body.position,
     category: req.body.category,
     tags: req.body.tags,
+    userId: req.body.userId,
    // images: req.files.map((file) => file.path),
   });
 
@@ -64,7 +65,24 @@ router.get("", async (req, res) => {
   });
   res.status(200).json(shops);
 });
+router.get("/list/:id", async (req, res) => {
 
+  let shops = await Shop.find({ userId: req.params.id });
+  shops = shops.map((shop) => {
+    return {
+      self: "/api/v1/shops/" + shop.id,
+      name: shop.name,
+      description: shop.description,
+      position: shop.position,
+      category: shop.category,
+      tags: shop.tags,
+      images: shop.images,
+      userId : shop.userId,
+      id: shop.id,
+    };
+  });
+  res.status(200).json(shops);
+});
 // Get singolo negozio
 
 router.get("/:id", async (req, res) => {
@@ -77,6 +95,7 @@ router.get("/:id", async (req, res) => {
     category: shop.category,
     tags: shop.tags,
     images: shop.images,
+    id: shop.id,
   });
 });
 
@@ -108,7 +127,7 @@ router.delete("/:id", async (req, res) => {
 
 //Modifica di un negozio
 router.put("/:id", async (req, res) => {
-  let shop = await Shop.findOneAndUpdate(req.params.id, {name: req.body.name,  description: req.body.description, position: req.body.position, category: req.body.category, tags: req.body.tags, images: req.files.map((file) => file.path)} );
+  let shop = await Shop.findByIdAndUpdate(req.params.id, {name: req.body.name,  description: req.body.description, position: req.body.position, category: req.body.category, tags: req.body.tags,/* images: req.files.map((file) => file.path)*/} );
   let shopId = shop.id;
   console.log("Negozio modificato correttamente");
   res

@@ -26,6 +26,9 @@ const shopSchema = new Schema({
   },
   tags: [String],
   images: [String],
+  userId: {
+    type: String,
+},
 });
 
 // Creo il modello del prodotto dallo schema

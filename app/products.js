@@ -33,6 +33,7 @@ router.post("", async (req, res) => {
     price: req.body.price,
     category: req.body.category,
     tags: req.body.tags,
+    userId : req.body.userId,
     //images: req.files.map((file) => file.path),
   });
 
@@ -139,4 +140,22 @@ router.put("/:id", async (req, res) => {
     .send();
 });
 
+router.get("/catalog/:id", async (req, res) => {
+
+  let products = await Product.find({ userId: req.params.id });
+  products = products.map((product) => {
+    return {
+      self: "/api/v1/products/" + product.id,
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      category: product.category,
+      tags: product.tags,
+      userId: product.userId,
+      //images: product.images,
+    };
+  });
+  res.status(200).json(products);
+});
 module.exports = router;
