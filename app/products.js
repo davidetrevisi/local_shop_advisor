@@ -34,7 +34,7 @@ router.post("", async (req, res) => {
     category: req.body.category,
     tags: req.body.tags,
     userId : req.body.userId,
-    //images: req.files.map((file) => file.path),
+    images: req.files.map((file) => file.path),
   });
 
   product = await product.save();
@@ -62,7 +62,7 @@ router.get("", async (req, res) => {
       price: product.price,
       category: product.category,
       tags: product.tags,
-      //images: product.images,
+      images: product.images,
     };
   });
   res.status(200).json(products);
@@ -80,7 +80,7 @@ router.get("/:id", async (req, res) => {
     price: product.price,
     category: product.category,
     tags: product.tags,
-    //images: product.images,
+    images: product.images,
   });
 });
 
