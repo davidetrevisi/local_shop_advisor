@@ -32,6 +32,8 @@ router.post("", tokenChecker, async (req, res) => {
 
   if (user_type === "Venditore" || user_type === "Admin") {
     let product = new Product({
+      self: "/api/v2/products/" + product.id,
+      id: product.id,
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,
@@ -148,6 +150,8 @@ router.put("/:id", tokenChecker, async (req, res) => {
 
   if (user_type === "Venditore" || user_type === "Admin") {
     let product = await Product.findByIdAndUpdate(req.params.id, {
+      self: "/api/v2/products/" + product.id,
+      id: product.id,
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,
