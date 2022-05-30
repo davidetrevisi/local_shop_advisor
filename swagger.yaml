@@ -217,26 +217,6 @@ paths:
           schema:
             $ref: "#/definitions/Shop"
         404:
-          description: Error not found         
-  /images/{id}:
-    get:
-      summary: Static route per le immagini
-      parameters:
-        - in: path
-          name: id
-          required: true
-          type: string
-          description: Id dell'immagine da ottenere
-      produces:
-        - image/png
-        - image/jpg
-        - image/jpeg
-      responses:
-        200:
-          description: Immagine
-          schema:
-            type: file
-        404:
           description: Error not found
   /carts:
     post:
@@ -272,7 +252,7 @@ paths:
       responses:
         200:
           description: Risposta elaborata correttamente
-          schema: 
+          schema:
             $ref: "#/definitions/Cart"
           examples:
             application/json:
@@ -283,7 +263,119 @@ paths:
                 price: 16
                 total: 80
               subTotal: 80
-              
+  /authentications/login:
+    post:
+      summary: Login all'applicazione
+      parameters:
+        - in: body
+          name: credentials
+          required: true
+          schema:
+            $ref: "#/definitions/Account"
+      responses:
+        201:
+          description: Login effettuato correttamente
+          headers:
+            token:
+              type: string
+              description: Token contenente le informazioni di login.
+        404:
+          description: Error not found
+  /authentications/logout:
+    get:
+      summary: Logout dall'applicazione
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+      responses:
+        200:
+          description: Logout effettuato correttamente
+        404:
+          description: Error not found
+  /authentications/signup:
+    post:
+      summary: Creazione account cliente (venditore è lo stesso ma cambiano i parametri)
+      parameters:
+        - in: body
+          name: user
+          required: true
+          description: Creazione account cliente (venditore è lo stesso ma cambiano i parametri)
+          schema:
+            $ref: "#/definitions/Cliente"
+      responses:
+        201:
+          description: Utente aggiunto correttamente
+          schema:
+            $ref: "#/definitions/Cliente"
+          examples:
+            application/json:
+              email: cliente@cliente.com
+              password: 123
+              name: Mario
+              surname: Rossi
+              phone: 30000
+              birthdate: "2017-07-21T17:32:28Z"
+              shipping_address: 12345678
+              billing_address: 12345678
+              payment: PayPal
+        400:
+          description: Errore nell'aggiunta utente
+        404:
+          description: Error not found
+  /authentications/users:
+    get:
+      summary: Lista di tutti gli utenti
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Account"
+        404:
+          description: Error not found
+  /authentications/user/{userId}:
+    get:
+      summary: Get di un singolo utente (Cliente come esempio, ma è lo stesso per il Venditore)
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+              $ref: "#/definitions/Cliente"
+        404:
+          description: Error not found
+    delete:
+      summary: Eliminazione di un account
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+      responses:
+        204:
+          description: Account rimosso correttamente
+        404:
+          description: Error not found
 definitions:
   Product:
     type: object
@@ -387,3 +479,137 @@ definitions:
       userId: 32423f3
       itemId: 231432fwd45
       quantity: 0
+  Address:
+    type: object
+    properties:
+      city:
+        type: string
+      CAP:
+        type: number
+        minimum: 0
+      street:
+        type: string
+      number:
+        type: number
+        minimum: 0
+    required:
+      - city
+      - CAP
+      - street
+      - number
+    example:
+      city: Trento
+      CAP: 31000
+      street: Via di Prova
+      number: 10
+  Account:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+    required:
+      - email
+      - password
+  Admin:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+      name:
+        type: string
+      surname:
+        type: string
+    required:
+      - email
+      - password
+      - name
+      - surname
+    example:
+      email: admin@admin.com
+      password: admin
+      name: Mario
+      surname: Rossi
+  Cliente:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+      name:
+        type: string
+      surname:
+        type: string
+      phone:
+        type: number
+        minimum: 0
+      birthdate:
+        type: string
+        format: date-time
+        default: Date.now
+      shipping_address:
+        type: string
+      billing_address:
+        type: string
+      payment:
+        type: string
+    required:
+      - email
+      - password
+      - name
+      - surname
+      - birthdate
+    example:
+      email: cliente@cliente.com
+      password: 123
+      name: Mario
+      surname: Rossi
+      phone: 30000
+      birthdate: "2017-07-21T17:32:28Z"
+      shipping_address: 12345678
+      billing_address: 12345678
+      payment: PayPal
+  Venditore:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+      name:
+        type: string
+      surname:
+        type: string
+      phone:
+        type: number
+        minimum: 0
+      birthdate:
+        type: string
+        format: date-time
+        default: Date.now
+      personal_address:
+        type: string
+    required:
+      - email
+      - password
+      - name
+      - surname
+      - phone
+      - birthdate
+      - personal_address
+    example:
+      email: cliente@cliente.com
+      password: 123
+      name: Mario
+      surname: Rossi
+      phone: 30000
+      birthdate: "2017-07-21T17:32:28Z"
+      shipping_address: 12345678
