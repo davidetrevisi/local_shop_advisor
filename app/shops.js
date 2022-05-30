@@ -28,12 +28,9 @@ function deleteFiles(files, callback) {
 // Aggiunta di un negozio
 
 router.post("", tokenChecker, async (req, res) => {
-  var user_type = JSON.stringify(req.body.account);
+  var user_type = req.userAccount;
 
-  if (
-    user_type.toLowerCase().indexOf("cliente") === 1 ||
-    user_type.toLowerCase().indexOf("admin") === 1
-  ) {
+  if (user_type === "Venditore" || user_type === "Admin") {
     let shop = new Shop({
       name: req.body.name,
       description: req.body.description,
@@ -50,7 +47,7 @@ router.post("", tokenChecker, async (req, res) => {
 
     console.log("Negozio creato correttamente");
     res
-      .location("/api/v1/shops/" + shopId)
+      .location("/api/v2/shops/" + shopId)
       .status(201)
       .send();
   }
@@ -59,22 +56,20 @@ router.post("", tokenChecker, async (req, res) => {
 // Get lista negozi
 
 router.get("", tokenChecker, async (req, res) => {
-  var user_type = JSON.stringify(req.body.account);
+  var user_type = req.userAccount;
 
-  if (
-    user_type.toLowerCase().indexOf("cliente") === 1 ||
-    user_type.toLowerCase().indexOf("admin") === 1
-  ) {
+  if (user_type === "Venditore" || user_type === "Admin") {
     let shops = await Shop.find({});
     shops = shops.map((shop) => {
       return {
-        self: "/api/v1/shops/" + shop.id,
+        self: "/api/v2/shops/" + shop.id,
         name: shop.name,
         description: shop.description,
         position: shop.position,
         category: shop.category,
         tags: shop.tags,
         images: shop.images,
+        userId: shop.userId,
       };
     });
     res.status(200).json(shops);
@@ -84,31 +79,12 @@ router.get("", tokenChecker, async (req, res) => {
 // Get singolo negozio
 
 router.get("/:id", tokenChecker, async (req, res) => {
-  var user_type = JSON.stringify(req.body.account);
+  var user_type = req.userAccount;
 
-  if (
-    user_type.toLowerCase().indexOf("cliente") === 1 ||
-    user_type.toLowerCase().indexOf("admin") === 1
-  ) {
+  if (user_type === "Venditore" || user_type === "Admin") {
     let shop = await Shop.findById(req.params.id);
     res.status(200).json({
-      self: "/api/v1/shops/" + shop.id,
-      name: shop.name,
-      description: shop.description,
-      position: shop.position,
-      category: shop.category,
-      tags: shop.tags,
-      images: shop.images,
-    });
-    res.status(200).json(shops);
-  }
-});
-
-router.get("/list/:id", async (req, res) => {
-  let shops = await Shop.find({ userId: req.params.id });
-  shops = shops.map((shop) => {
-    return {
-      self: "/api/v1/shops/" + shop.id,
+      self: "/api/v2/shops/" + shop.id,
       name: shop.name,
       description: shop.description,
       position: shop.position,
@@ -116,36 +92,41 @@ router.get("/list/:id", async (req, res) => {
       tags: shop.tags,
       images: shop.images,
       userId: shop.userId,
-      id: shop.id,
-    };
-  });
-  res.status(200).json(shops);
+    });
+    res.status(200).json(shops);
+  }
 });
-// Get singolo negozio
 
-router.get("/:id", async (req, res) => {
-  let shop = await Shop.findById(req.params.id);
-  res.status(200).json({
-    self: "/api/v1/shops/" + shop.id,
-    name: shop.name,
-    description: shop.description,
-    position: shop.position,
-    category: shop.category,
-    tags: shop.tags,
-    images: shop.images,
-    id: shop.id,
-  });
+// Get negozi di un singolo utente
+
+router.get("/list/:id", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (user_type === "Venditore" || user_type === "Admin") {
+    let shops = await Shop.find({ userId: req.params.id });
+    shops = shops.map((shop) => {
+      return {
+        self: "/api/v2/shops/" + shop.id,
+        name: shop.name,
+        description: shop.description,
+        position: shop.position,
+        category: shop.category,
+        tags: shop.tags,
+        images: shop.images,
+        userId: shop.userId,
+        id: shop.id,
+      };
+    });
+    res.status(200).json(shops);
+  }
 });
 
 // Eliminazione di un negozio
 
 router.delete("/:id", tokenChecker, async (req, res) => {
-  var user_type = JSON.stringify(req.body.account);
+  var user_type = req.userAccount;
 
-  if (
-    user_type.toLowerCase().indexOf("cliente") === 1 ||
-    user_type.toLowerCase().indexOf("admin") === 1
-  ) {
+  if (user_type === "Venditore" || user_type === "Admin") {
     let shop = await Shop.findById(req.params.id).exec();
 
     if (!shop) {
@@ -170,13 +151,11 @@ router.delete("/:id", tokenChecker, async (req, res) => {
 });
 
 //Modifica di un negozio
-router.put("/:id", tokenChecker, async (req, res) => {
-  var user_type = JSON.stringify(req.body.account);
 
-  if (
-    user_type.toLowerCase().indexOf("cliente") === 1 ||
-    user_type.toLowerCase().indexOf("admin") === 1
-  ) {
+router.put("/:id", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (user_type === "Venditore" || user_type === "Admin") {
     let shop = await Shop.findOneAndUpdate(req.params.id, {
       name: req.body.name,
       description: req.body.description,
@@ -184,11 +163,12 @@ router.put("/:id", tokenChecker, async (req, res) => {
       category: req.body.category,
       tags: req.body.tags,
       images: req.files.map((file) => file.path),
+      userId: req.body.userId,
     });
     let shopId = shop.id;
     console.log("Negozio modificato correttamente");
     res
-      .location("/api/v1/shops/" + shopId)
+      .location("/api/v2/shops/" + shopId)
       .status(200)
       .send();
   }

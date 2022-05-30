@@ -20,17 +20,12 @@ const shopSchema = new Schema({
     type: String,
     required: true,
   },
-  productId: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-    },
-  ],
   tags: [String],
   images: [String],
   userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Venditore",
+    ref: "Account",
+    required: true,
   },
 });
 

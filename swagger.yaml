@@ -4,7 +4,7 @@ info:
   title: "Local Shop Advisor"
   description: Documentazione delle API del progetto del corso di Ingegneria del Software
 host: localhost:8080
-basePath: /api/v1
+basePath: /api/v2
 schemes:
   - https
 consumes:
@@ -27,9 +27,12 @@ paths:
     post:
       consumes:
         - multipart/form-data
-        - application/json
       summary: Creazione di un nuovo prodotto
       parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
         - in: body
           name: product
           required: true
@@ -42,7 +45,7 @@ paths:
           schema:
             $ref: "#/definitions/Product"
           examples:
-            application/json:
+            multipart/form-data:
               name: Felpa
               description: Una bella felpa
               price: 10
@@ -53,6 +56,8 @@ paths:
               images:
                 - images//image.jpg
                 - images//image2.jpg
+              userId: 12345
+              shopId: 12345
         404:
           description: Error not found
   /products/{productId}:
@@ -74,6 +79,10 @@ paths:
     delete:
       summary: Eliminazione di un singolo prodotto
       parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
         - in: path
           name: productId
           required: true
@@ -89,6 +98,10 @@ paths:
     put:
       summary: Modifica di un prodotto
       parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
         - in: path
           name: productId
           required: true
@@ -105,6 +118,28 @@ paths:
           description: Prodotto modificato correttamente
           schema:
             $ref: "#/definitions/Product"
+        404:
+          description: Error not found
+  /products/catalog/{userId}:
+    get:
+      summary: Get dei prodotti di un determinato utente
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+          description: L'Id dell'account da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Product"
         404:
           description: Error not found
   /products/find/{name}:
@@ -126,6 +161,11 @@ paths:
   /shops:
     get:
       summary: Lista di tutti i Negozi
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
       responses:
         200:
           description: Risposta elaborata correttamente
@@ -138,9 +178,12 @@ paths:
     post:
       consumes:
         - multipart/form-data
-        - application/json
       summary: Creazione di un nuovo negozio
       parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
         - in: body
           name: shop
           required: true
@@ -153,7 +196,7 @@ paths:
           schema:
             $ref: "#/definitions/Shop"
           examples:
-            application/json:
+            multipart/form-data:
               name: Negozio di Felpe
               description: Bottega a gestione familiare di vendita abbigliamento
               position: Via Mario Rossi 22, Trento
@@ -164,12 +207,39 @@ paths:
               images:
                 - images//image.jpg
                 - images//image2.jpg
+              userId: 12345
+        404:
+          description: Error not found
+  /shops/list/{userId}:
+    get:
+      summary: Get dei negozi di un determinato utente
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+          description: L'id dell'account da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Shop"
         404:
           description: Error not found
   /shops/{shopId}:
     get:
       summary: Get di un singolo negozio
       parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
         - in: path
           name: shopId
           required: true
@@ -185,6 +255,10 @@ paths:
     delete:
       summary: Eliminazione di un singolo negozio
       parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
         - in: path
           name: shopId
           required: true
@@ -200,6 +274,10 @@ paths:
     put:
       summary: Modifica di un negozio
       parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
         - in: path
           name: shopId
           required: true
@@ -222,6 +300,10 @@ paths:
     post:
       summary: Aggiunta di un prodotto al carrello
       parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
         - in: body
           name: cart
           required: true
@@ -245,6 +327,10 @@ paths:
     get:
       summary: Visualizzazione prodotti nel carrello
       parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
         - in: path
           name: userId
           required: true
@@ -398,11 +484,17 @@ definitions:
         type: array
         items:
           type: string
+      userId:
+        type: string
+      shopId:
+        type: string
     required:
       - name
       - description
       - price
       - category
+      - userId
+      - shopId
     example:
       name: Felpa
       description: Una bella felpa
@@ -414,6 +506,8 @@ definitions:
       images:
         - images//image.jpg
         - images//image2.jpg
+      userId: 12345
+      shopId: 12345
   Shop:
     type: object
     properties:
@@ -433,11 +527,14 @@ definitions:
         type: array
         items:
           type: string
+      userId:
+        type: string
     required:
       - name
       - description
       - position
       - category
+      - userId
     example:
       name: Negozio di Felpe
       description: Bottega a gestione familiare di vendita abbigliamento
@@ -449,11 +546,12 @@ definitions:
       images:
         - images//image.jpg
         - images//image2.jpg
+      userId: 12345
   Item:
     type: object
     properties:
       productId:
-        type: object
+        type: string
       quantity:
         type: number
         minimum: 1
@@ -470,14 +568,19 @@ definitions:
     type: object
     properties:
       userId:
-        type: object
+        type: string
       items:
-        type: object
+        type: array
+        items:
+          type: object
       subTotal:
         type: number
+        default: 0
     example:
       userId: 32423f3
-      itemId: 231432fwd45
+      items:
+        - 231432fwd45
+        - 12345
       quantity: 0
   Address:
     type: object

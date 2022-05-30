@@ -32,9 +32,7 @@ const CartSchema = new Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "Cliente",
     },
-
     items: [ItemSchema],
-
     subTotal: {
       default: 0,
       type: Number,
