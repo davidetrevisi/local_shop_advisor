@@ -102,6 +102,19 @@ router.get("/:id", async (req, res) => {
 
 });
 
-
+router.delete("/:id", async (req, res) => {
+    let cart = await Cart.findOne({userId: req.params.id}).exec();
+  
+    if (!cart) {
+      res.status(404).send();
+      console.log("Cart not found");
+      return;
+    }
+  
+    await cart.deleteOne();
+  
+    res.status(204).send();
+    console.log("Carrello svuotato");
+  });
 
 module.exports = router;
