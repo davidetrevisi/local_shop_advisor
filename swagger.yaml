@@ -123,8 +123,6 @@ paths:
             $ref: "#/definitions/Product"
         404:
           description: Error not found
-<<<<<<< HEAD
-=======
   /shops:
     get:
       summary: Lista di tutti i Negozi
@@ -165,7 +163,7 @@ paths:
                 - Felpe
               images:
                 - images//image.jpg
-               - images//image2.jpg
+                - images//image2.jpg
         404:
           description: Error not found
   /shops/{shopId}:
@@ -220,7 +218,6 @@ paths:
             $ref: "#/definitions/Shop"
         404:
           description: Error not found         
->>>>>>> shops
   /images/{id}:
     get:
       summary: Static route per le immagini
@@ -241,6 +238,52 @@ paths:
             type: file
         404:
           description: Error not found
+  /carts:
+    post:
+      summary: Aggiunta di un prodotto al carrello
+      parameters:
+        - in: body
+          name: cart
+          required: true
+          schema:
+            $ref: "#/definitions/Cart"
+      responses:
+        200:
+          description: Add to Cart successfully!
+          schema:
+            $ref: "#/definitions/Cart"
+          examples:
+            application/json:
+              userId: 3232445
+              items:
+                productId: 32423f3
+                quantity: 5
+                price: 16
+                total: 80
+              subTotal: 80
+  /carts/{userId}:
+    get:
+      summary: Visualizzazione prodotti nel carrello
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          type: string
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema: 
+            $ref: "#/definitions/Cart"
+          examples:
+            application/json:
+              userId: 3232445
+              items:
+                productId: 32423f3
+                quantity: 5
+                price: 16
+                total: 80
+              subTotal: 80
+              
 definitions:
   Product:
     type: object
@@ -279,8 +322,6 @@ definitions:
       images:
         - images//image.jpg
         - images//image2.jpg
-<<<<<<< HEAD
-=======
   Shop:
     type: object
     properties:
@@ -316,4 +357,33 @@ definitions:
       images:
         - images//image.jpg
         - images//image2.jpg
->>>>>>> shops
+  Item:
+    type: object
+    properties:
+      productId:
+        type: object
+      quantity:
+        type: number
+        minimum: 1
+      price:
+        type: number
+      total:
+        type: number
+    example:
+      productId: 32423f3
+      quantity: 5
+      price: 16
+      total: 80
+  Cart:
+    type: object
+    properties:
+      userId:
+        type: object
+      items:
+        type: object
+      subTotal:
+        type: number
+    example:
+      userId: 32423f3
+      itemId: 231432fwd45
+      quantity: 0
