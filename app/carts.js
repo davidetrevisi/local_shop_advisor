@@ -81,8 +81,9 @@ router.post("", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
 
-    let cart = await Cart.findOne({ userId: req.params.id });
+    let cart = await Cart.findOne({ userId: req.params.id }).populate("items.productId");
     if (cart) {
+        console.log(cart)
     res.status(200).json({
         self: "/api/v1/carts/" + cart.id,
         user: cart.userId,

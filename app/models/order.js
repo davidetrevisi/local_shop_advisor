@@ -1,11 +1,12 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 const Product = require("./product");
+const Address = require("./account");
+
 let ItemSchema = new Schema(
     {
         productId: {
-            type: Schema.Types.ObjectId,
-            ref: "Product",
+            type: String
         },
         quantity: {
             type: Number,
@@ -25,23 +26,35 @@ let ItemSchema = new Schema(
         timestamps: true,
     }
 );
-module.exports = mongoose.model("Item", ItemSchema);
-
-const CartSchema = new Schema(
+module.exports = mongoose.model("Items", ItemSchema);
+const OrderSchema = new Schema(
     {
-        userId: {
+        customerId: {
             type: String,
         },
 
-        items: [ItemSchema],
+        items: [ ItemSchema],
 
         subTotal: {
             default: 0,
             type: Number,
         },
+        sellerId: {
+            type: String,
+        },
+        status: {
+            type: String,
+        },
+        payment: {
+            type: String,
+        },
+        shipping_address: {
+            type: Schema.Types.ObjectId,
+            ref: "Address",
+          },
     },
     {
         timestamps: true,
     }
 );
-module.exports = mongoose.model("Cart", CartSchema);
+module.exports = mongoose.model("Order", OrderSchema);
