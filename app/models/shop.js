@@ -20,15 +20,18 @@ const shopSchema = new Schema({
     type: String,
     required: true,
   },
-  productId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Product",
-  },
+  productId: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
+    },
+  ],
   tags: [String],
   images: [String],
   userId: {
-    type: String,
-},
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Venditore",
+  },
 });
 
 // Creo il modello del prodotto dallo schema

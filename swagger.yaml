@@ -123,6 +123,104 @@ paths:
             $ref: "#/definitions/Product"
         404:
           description: Error not found
+<<<<<<< HEAD
+=======
+  /shops:
+    get:
+      summary: Lista di tutti i Negozi
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Shop"
+        404:
+          description: Error not found
+    post:
+      consumes:
+        - multipart/form-data
+        - application/json
+      summary: Creazione di un nuovo negozio
+      parameters:
+        - in: body
+          name: shop
+          required: true
+          description: I parametri del negozio da creare + immagini da caricare
+          schema:
+            $ref: "#/definitions/Shop"
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: "#/definitions/Shop"
+          examples:
+            application/json:
+              name: Negozio di Felpe
+              description: Bottega a gestione familiare di vendita abbigliamento
+              position: Via Mario Rossi 22, Trento
+              category: Abbigliamento
+              tags:
+                - Abbigliamento
+                - Felpe
+              images:
+                - images//image.jpg
+               - images//image2.jpg
+        404:
+          description: Error not found
+  /shops/{shopId}:
+    get:
+      summary: Get di un singolo negozio
+      parameters:
+        - in: path
+          name: shopId
+          required: true
+          type: string
+          description: L'id del negozio da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            $ref: "#/definitions/Shop"
+        404:
+          description: Error not found
+    delete:
+      summary: Eliminazione di un singolo negozio
+      parameters:
+        - in: path
+          name: shopId
+          required: true
+          type: string
+          description: L'id del negozio da eliminare
+      responses:
+        204:
+          description: Negozio rimosso correttamente
+        400:
+          description: Cannot delete images
+        404:
+          description: Error not found
+    put:
+      summary: Modifica di un negozio
+      parameters:
+        - in: path
+          name: shopId
+          required: true
+          type: string
+          description: L'id del negozio da modificare
+        - in: body
+          name: shop
+          required: true
+          description: I nuovi valori del negozio da modificare
+          schema:
+            $ref: "#/definitions/Shop"
+      responses:
+        200:
+          description: Negozio modificato correttamente
+          schema:
+            $ref: "#/definitions/Shop"
+        404:
+          description: Error not found         
+>>>>>>> shops
   /images/{id}:
     get:
       summary: Static route per le immagini
@@ -181,3 +279,41 @@ definitions:
       images:
         - images//image.jpg
         - images//image2.jpg
+<<<<<<< HEAD
+=======
+  Shop:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      position:
+        type: string
+      category:
+        type: string
+      tags:
+        type: array
+        items:
+          type: string
+      images:
+        type: array
+        items:
+          type: string
+    required:
+      - name
+      - description
+      - position
+      - category
+    example:
+      name: Negozio di Felpe
+      description: Bottega a gestione familiare di vendita abbigliamento
+      position: Via Mario Rossi 22, Trento
+      category: Abbigliamento
+      tags:
+        - Abbigliamento
+        - Felpe
+      images:
+        - images//image.jpg
+        - images//image2.jpg
+>>>>>>> shops
