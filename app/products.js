@@ -173,11 +173,34 @@ router.put("/:id", tokenChecker, async (req, res) => {
 
 // Get di tutti i prodotti di un determinato account
 
-router.get("/catalog/:id", async (req, res) => {
+router.get("/catalog/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
   if (user_type === "Venditore") {
     let products = await Product.find({ userId: req.params.id });
+    products = products.map((product) => {
+      return {
+        self: "/api/v2/products/" + product.id,
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        category: product.category,
+        tags: product.tags,
+        images: product.images,
+        userId: product.userId,
+        shopId: product.shopId,
+      };
+    });
+    res.status(200).json(products);
+  }
+});
+
+router.get("/shop/:id", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (user_type === "Venditore" || user_type === "Cliente") {
+    let products = await Product.find({ shopId: req.params.id });
     products = products.map((product) => {
       return {
         self: "/api/v2/products/" + product.id,
