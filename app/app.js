@@ -7,7 +7,7 @@ const products = require("./products.js");
 const images = require("./images.js");
 const shops = require("./shops.js");
 const carts = require("./carts.js");
-
+const orders = require("./orders.js");
 const authentications = require("./authentications.js");
 
 // Middleware per il parsing
@@ -36,6 +36,7 @@ app.use("/api/v2/authentications", authentications);
 app.use("/api/v2/products", images, products);
 app.use("/api/v2/shops", images, shops);
 app.use("/api/v2/carts", carts);
+app.use("/api/v2/orders", orders);
 //...
 
 // Handler per gli errori

@@ -37,7 +37,7 @@ router.post("", tokenChecker, async (req, res) => {
       price: req.body.price,
       category: req.body.category,
       tags: req.body.tags,
-      images: req.files.map((file) => file.path),
+     // images: req.files.map((file) => file.path),
       userId: req.body.userId,
       shopId: req.body.shopId,
     });
@@ -68,7 +68,7 @@ router.get("", async (req, res) => {
       price: product.price,
       category: product.category,
       tags: product.tags,
-      images: product.images,
+    //  images: product.images,
       userId: product.userId,
       shopId: product.shopId,
     };
@@ -88,7 +88,7 @@ router.get("/:id", async (req, res) => {
     price: product.price,
     category: product.category,
     tags: product.tags,
-    images: product.images,
+  //  images: product.images,
     userId: product.userId,
     shopId: product.shopId,
   });
@@ -137,7 +137,7 @@ router.get("/find/:name", async (req, res) => {
       price: product.price,
       category: product.category,
       tags: product.tags,
-      images: product.images,
+     // images: product.images,
       userId: product.userId,
       shopId: product.shopId,
     };
@@ -157,7 +157,7 @@ router.put("/:id", tokenChecker, async (req, res) => {
       price: req.body.price,
       category: req.body.category,
       tags: req.body.tags,
-      images: req.files.map((file) => file.path),
+     // images: req.files.map((file) => file.path),
       userId: req.body.userId,
       shopId: req.body.shopId,
     });
@@ -173,10 +173,10 @@ router.put("/:id", tokenChecker, async (req, res) => {
 
 // Get di tutti i prodotti di un determinato account
 
-router.get("/catalog/:id", async (req, res) => {
+router.get("/catalog/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
-  if (user_type === "Venditore") {
+  if (user_type === "Venditore" || user_type === "Admin") {
     let products = await Product.find({ userId: req.params.id });
     products = products.map((product) => {
       return {
@@ -187,7 +187,32 @@ router.get("/catalog/:id", async (req, res) => {
         price: product.price,
         category: product.category,
         tags: product.tags,
-        images: product.images,
+       // images: product.images,
+        userId: product.userId,
+        shopId: product.shopId,
+      };
+    });
+    res.status(200).json(products);
+  }
+});
+
+// Get dei prodotti di un negozio
+
+router.get("/shop/:id", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (user_type === "Venditore" || user_type === "Admin") {
+    let products = await Product.find({ shopId: req.params.id });
+    products = products.map((product) => {
+      return {
+        self: "/api/v2/products/" + product.id,
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        category: product.category,
+        tags: product.tags,
+       // images: product.images,
         userId: product.userId,
         shopId: product.shopId,
       };
