@@ -92,12 +92,15 @@ router.post("", tokenChecker, async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
-  if (user_type === "Cliente") {
-    let cart = await Cart.findOne({ userId: req.params.id });
+  if (user_type === "Cliente" || user_type === "Admin") {
+    let cart = await Cart.findOne({ userId: req.params.id }).populate(
+      "items.productId"
+    );
     if (cart) {
+      console.log(cart);
       res.status(200).json({
         self: "/api/v2/carts/" + cart.id,
         user: cart.userId,
@@ -113,6 +116,25 @@ router.get("/:id", async (req, res) => {
         data: data,
       });
     }
+  }
+});
+
+router.delete("/:id", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (user_type === "Cliente" || user_type === "Admin") {
+    let cart = await Cart.findOne({ userId: req.params.id }).exec();
+
+    if (!cart) {
+      res.status(404).send();
+      console.log("Cart not found");
+      return;
+    }
+
+    await cart.deleteOne();
+
+    res.status(204).send();
+    console.log("Carrello svuotato");
   }
 });
 
