@@ -7,7 +7,7 @@ const fs = require("fs");
 
 const Order = require("./models/order");
 const Product = require("./models/product");
-const Cart = require("./models/cart");
+const Cart = require("./models/cart").Cart;
 const Cliente = require("./models/account").Cliente;
 const tokenChecker = require("./tokenChecker");
 

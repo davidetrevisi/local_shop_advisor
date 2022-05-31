@@ -37,9 +37,9 @@ router.post("", tokenChecker, async (req, res) => {
       price: req.body.price,
       category: req.body.category,
       tags: req.body.tags,
-      images: req.files.map((file) => file.path),
+     // images: req.files.map((file) => file.path),
       userId: req.body.userId,
-      //shopId: req.body.shopId,
+      shopId: req.body.shopId,
     });
 
     product = await product.save();
@@ -68,7 +68,7 @@ router.get("", async (req, res) => {
       price: product.price,
       category: product.category,
       tags: product.tags,
-      images: product.images,
+    //  images: product.images,
       userId: product.userId,
       shopId: product.shopId,
     };
@@ -88,7 +88,7 @@ router.get("/:id", async (req, res) => {
     price: product.price,
     category: product.category,
     tags: product.tags,
-    images: product.images,
+  //  images: product.images,
     userId: product.userId,
     shopId: product.shopId,
   });
@@ -137,7 +137,7 @@ router.get("/find/:name", async (req, res) => {
       price: product.price,
       category: product.category,
       tags: product.tags,
-      images: product.images,
+     // images: product.images,
       userId: product.userId,
       shopId: product.shopId,
     };
@@ -157,7 +157,7 @@ router.put("/:id", tokenChecker, async (req, res) => {
       price: req.body.price,
       category: req.body.category,
       tags: req.body.tags,
-      images: req.files.map((file) => file.path),
+     // images: req.files.map((file) => file.path),
       userId: req.body.userId,
       shopId: req.body.shopId,
     });
@@ -187,7 +187,7 @@ router.get("/catalog/:id", tokenChecker, async (req, res) => {
         price: product.price,
         category: product.category,
         tags: product.tags,
-        images: product.images,
+       // images: product.images,
         userId: product.userId,
         shopId: product.shopId,
       };
@@ -212,7 +212,7 @@ router.get("/shop/:id", tokenChecker, async (req, res) => {
         price: product.price,
         category: product.category,
         tags: product.tags,
-        images: product.images,
+       // images: product.images,
         userId: product.userId,
         shopId: product.shopId,
       };

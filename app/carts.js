@@ -7,7 +7,7 @@ const tokenChecker = require("./tokenChecker.js");
 
 // Importo il modello del prodotto dalla cartella models
 
-const Cart = require("./models/cart");
+const Cart = require("./models/cart").Cart;
 const Product = require("./models/product");
 
 router.post("", tokenChecker, async (req, res) => {
@@ -16,11 +16,9 @@ router.post("", tokenChecker, async (req, res) => {
   if (user_type === "Cliente") {
     const { itemId, note } = req.body;
     let data = null;
-
-    const quantity = Number.parseInt(req.body.quantity);
-
-    let cart = await Cart.findOne({ userId: req.userId });
-    const productDetails = await Product.findById(itemId);
+    const quantity = Number.parseInt (req.body.quantity);
+    let cart = await Cart.findOne ({ userId: req.userId });
+    const productDetails = await Product.findById (itemId);
 
     console.log("productDetails", productDetails);
 
@@ -96,9 +94,7 @@ router.get("/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
   if (user_type === "Cliente" || user_type === "Admin") {
-    let cart = await Cart.findOne({ userId: req.params.id }).populate(
-      "items.productId"
-    );
+    let cart = await Cart.findOne({ userId: req.params.id }).populate("items.productId");
     if (cart) {
       console.log(cart);
       res.status(200).json({
