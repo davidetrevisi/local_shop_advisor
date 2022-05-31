@@ -11,7 +11,7 @@ const Product = require("./models/product");
 const Cart = require("./models/cart");
 const Cliente = require("./models/account").Cliente;
 const Address = require("./models/account").Address;
-
+const tokenChecker = require("./tokenChecker");
 router.post("",tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
