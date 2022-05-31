@@ -4,7 +4,11 @@
   "description": "Progetto del corso di Ingegneria del Software 2022",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
+  },
+  "jest": {
+    "verbose": true,
+    "collectCoverage": true
   },
   "repository": {
     "type": "git",
@@ -24,5 +28,9 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.3",
     "multer": "^1.4.4"
+  },
+  "devDependencies": {
+    "jest": "^28.1.0",
+    "supertest": "^6.2.3"
   }
 }

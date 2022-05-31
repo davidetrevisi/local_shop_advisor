@@ -6,6 +6,7 @@ const fs = require("fs");
 // Importo il modello del prodotto dalla cartella models
 
 const Product = require("./models/product");
+const tokenChecker = require("./tokenChecker");
 
 // Funzione per rimozione immagini
 
@@ -26,26 +27,33 @@ function deleteFiles(files, callback) {
 
 // Aggiunta di un prodotto al catalogo
 
-router.post("", async (req, res) => {
-  let product = new Product({
-    name: req.body.name,
-    description: req.body.description,
-    price: req.body.price,
-    category: req.body.category,
-    tags: req.body.tags,
-    //images: req.files.map((file) => file.path),
-  });
+router.post("", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
 
-  product = await product.save();
+  if (user_type === "Venditore" || user_type === "Admin") {
+    let product = new Product({
+      self: "/api/v2/products/" + product.id,
+      id: product.id,
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      category: req.body.category,
+      tags: req.body.tags,
+      images: req.files.map((file) => file.path),
+      userId: req.body.userId,
+    });
 
-  let productId = product.id;
+    product = await product.save();
 
-  console.log("Prodotto aggiunto correttamente al catalogo");
-  console.log(productId);
-  res
-    .location("/api/v1/products/" + productId)
-    .status(201)
-    .send();
+    let productId = product.id;
+
+    console.log("Prodotto aggiunto correttamente al catalogo");
+    console.log(productId);
+    res
+      .location("/api/v2/products/" + productId)
+      .status(201)
+      .send();
+  }
 });
 
 // Get catalogo completo
@@ -54,14 +62,15 @@ router.get("", async (req, res) => {
   let products = await Product.find({});
   products = products.map((product) => {
     return {
-      self: "/api/v1/products/" + product.id,
+      self: "/api/v2/products/" + product.id,
       id: product.id,
       name: product.name,
       description: product.description,
       price: product.price,
       category: product.category,
       tags: product.tags,
-      //images: product.images,
+      images: product.images,
+      userId: product.userId,
     };
   });
   res.status(200).json(products);
@@ -72,71 +81,117 @@ router.get("", async (req, res) => {
 router.get("/:id", async (req, res) => {
   let product = await Product.findById(req.params.id);
   res.status(200).json({
-    self: "/api/v1/products/" + product.id,
+    self: "/api/v2/products/" + product.id,
     id: product.id,
     name: product.name,
     description: product.description,
     price: product.price,
     category: product.category,
     tags: product.tags,
-    //images: product.images,
+    images: product.images,
+    userId: product.userId,
   });
 });
 
 // Eliminazione di un prodotto
 
-router.delete("/:id", async (req, res) => {
-  let product = await Product.findById(req.params.id).exec();
+router.delete("/:id", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
 
-  if (!product) {
-    res.status(404).send();
-    console.log("Product not found");
-    return;
-  }
+  if (user_type === "Venditore" || user_type === "Admin") {
+    let product = await Product.findById(req.params.id).exec();
 
-  deleteFiles(product.images, function (err) {
-    if (err) {
-      res.status(400).send();
-      console.log("Cannot delete images");
-    } else {
-      console.log("All images removed");
+    if (!product) {
+      res.status(404).send();
+      console.log("Product not found");
+      return;
     }
-  });
 
-  await product.deleteOne();
+    deleteFiles(product.images, function (err) {
+      if (err) {
+        res.status(400).send();
+        console.log("Cannot delete images");
+      } else {
+        console.log("All images removed");
+      }
+    });
 
-  res.status(204).send();
-  console.log("Prodotto rimosso correttamente dal catalogo");
+    await product.deleteOne();
+
+    res.status(204).send();
+    console.log("Prodotto rimosso correttamente dal catalogo");
+  }
 });
 
 //Ricerca di un prodotto per nome
+
 router.get("/find/:name", async (req, res) => {
   let products = await Product.find({ name: req.params.name });
   products = products.map((product) => {
     return {
-      self: "/api/v1/products/" + product.id,
+      self: "/api/v2/products/" + product.id,
       id: product.id,
       name: product.name,
       description: product.description,
       price: product.price,
       category: product.category,
       tags: product.tags,
-      //images: product.images,
+      images: product.images,
+      userId: product.userId,
     };
   });
   res.status(200).json(products);
 });
 
 //Modifica di un prodotto
-router.put("/:id", async (req, res) => {
-  let product = await Product.findByIdAndUpdate(req.params.id, { name: req.body.name, description: req.body.description, price: req.body.price, category: req.body.category, /*tags: req.body.tags, images: req.files.map((file) => file.path)*/ });
-  let productId = product.id;
-  console.log("Prodotto modificato correttamente");
-  console.log(productId);
-  res
-    .location("/api/v1/products/" + productId)
-    .status(200)
-    .send();
+
+router.put("/:id", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (user_type === "Venditore" || user_type === "Admin") {
+    let product = await Product.findByIdAndUpdate(req.params.id, {
+      self: "/api/v2/products/" + product.id,
+      id: product.id,
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      category: req.body.category,
+      tags: req.body.tags,
+      images: req.files.map((file) => file.path),
+      userId: req.body.userId,
+    });
+    let productId = product.id;
+    console.log("Prodotto modificato correttamente");
+    console.log(productId);
+    res
+      .location("/api/v2/products/" + productId)
+      .status(200)
+      .send();
+  }
+});
+
+// Get di tutti i prodotti di un determinato account
+
+router.get("/catalog/:id", async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (user_type === "Venditore") {
+    let products = await Product.find({ userId: req.params.id });
+    products = products.map((product) => {
+      return {
+        self: "/api/v2/products/" + product.id,
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        category: product.category,
+        tags: product.tags,
+        images: product.images,
+        userId: product.userId,
+      };
+    });
+    res.status(200).json(products);
+  }
 });
 
 module.exports = router;

@@ -24,6 +24,16 @@ const productSchema = new Schema({
   },
   tags: [String],
   images: [String],
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Account",
+    required: true,
+  },
+  shopId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Shop",
+    required: true,
+  },
   // Nel caso servano in futuro
   // comments:
   // reviews:

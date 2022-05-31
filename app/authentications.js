@@ -60,7 +60,7 @@ router.post("/login", async function (req, res) {
         account: user.__t,
         email: user.email,
         id: user._id,
-        self: "api/v1/authentication/" + user._id,
+        self: "api/v2/authentication/" + user._id,
       });
     console.log("Token emesso!");
   }
@@ -126,7 +126,7 @@ router.post("/signup", async function (req, res) {
 
     console.log("Utente aggiunto correttamente");
     res
-      .location("/api/v1/authentications/users/" + user.id)
+      .location("/api/v2/authentications/users/" + user.id)
       .status(201)
       .send();
   } else if (user_type.toLowerCase().indexOf("venditore") === 1) {
@@ -163,7 +163,7 @@ router.post("/signup", async function (req, res) {
 
     console.log("Utente aggiunto correttamente");
     res
-      .location("/api/v1/authentications/users/" + user.id)
+      .location("/api/v2/authentications/users/" + user.id)
       .status(201)
       .send();
   } else {
@@ -197,7 +197,7 @@ router.get("/users", tokenChecker, async (req, res) => {
     console.log(users);
     users = users.map((user) => {
       return {
-        self: "/api/v1/authentication/users/" + user.id,
+        self: "/api/v2/authentication/users/" + user.id,
         name: user.name,
         surname: user.surname,
         email: user.email,
@@ -219,7 +219,7 @@ router.get("/users/:id", tokenChecker, async (req, res) => {
 
   if (req.userAccount == "Venditore") {
     res.status(200).json({
-      self: "/api/v1/authentications/users/" + user.id,
+      self: "/api/v2/authentications/users/" + user.id,
       email: user.email,
       password: user.password,
       name: user.name,
@@ -230,7 +230,7 @@ router.get("/users/:id", tokenChecker, async (req, res) => {
     });
   } else if (req.userAccount == "Cliente") {
     res.status(200).json({
-      self: "/api/v1/authentications/users/" + user.id,
+      self: "/api/v2/authentications/users/" + user.id,
       email: user.email,
       password: user.password,
       name: user.name,
@@ -243,7 +243,7 @@ router.get("/users/:id", tokenChecker, async (req, res) => {
     });
   } else {
     res.status(200).json({
-      self: "/api/v1/authentications/users/" + user.id,
+      self: "/api/v2/authentications/users/" + user.id,
       email: user.email,
       password: user.password,
       name: user.name,

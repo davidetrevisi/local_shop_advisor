@@ -27,15 +27,15 @@ app.use(express.urlencoded({ extended: true }));
 
 // Parte statica del frontend
 
-app.use("/", express.static("static"));
+//app.use("/", express.static("static"));
 app.use("/images", express.static("./images"));
 
 // Routing delle risorse con il versioning delle API
 
-app.use("/api/v1/authentications", authentications);
-app.use("/api/v1/products", images, products);
-app.use("/api/v1/shops", images, shops);
-app.use("/api/v1/carts", carts);
+app.use("/api/v2/authentications", authentications);
+app.use("/api/v2/products", images, products);
+app.use("/api/v2/shops", images, shops);
+app.use("/api/v2/carts", carts);
 //...
 
 // Handler per gli errori
