@@ -32,8 +32,6 @@ router.post("", tokenChecker, async (req, res) => {
 
   if (user_type === "Venditore" || user_type === "Admin") {
     let product = new Product({
-      self: "/api/v2/products/" + product.id,
-      id: product.id,
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,
@@ -41,6 +39,7 @@ router.post("", tokenChecker, async (req, res) => {
       tags: req.body.tags,
       images: req.files.map((file) => file.path),
       userId: req.body.userId,
+      shopId: req.body.shopId,
     });
 
     product = await product.save();
@@ -71,6 +70,7 @@ router.get("", async (req, res) => {
       tags: product.tags,
       images: product.images,
       userId: product.userId,
+      shopId: product.shopId,
     };
   });
   res.status(200).json(products);
@@ -90,6 +90,7 @@ router.get("/:id", async (req, res) => {
     tags: product.tags,
     images: product.images,
     userId: product.userId,
+    shopId: product.shopId,
   });
 });
 
@@ -138,6 +139,7 @@ router.get("/find/:name", async (req, res) => {
       tags: product.tags,
       images: product.images,
       userId: product.userId,
+      shopId: product.shopId,
     };
   });
   res.status(200).json(products);
@@ -150,8 +152,6 @@ router.put("/:id", tokenChecker, async (req, res) => {
 
   if (user_type === "Venditore" || user_type === "Admin") {
     let product = await Product.findByIdAndUpdate(req.params.id, {
-      self: "/api/v2/products/" + product.id,
-      id: product.id,
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,
@@ -159,6 +159,7 @@ router.put("/:id", tokenChecker, async (req, res) => {
       tags: req.body.tags,
       images: req.files.map((file) => file.path),
       userId: req.body.userId,
+      shopId: req.body.shopId,
     });
     let productId = product.id;
     console.log("Prodotto modificato correttamente");
@@ -188,6 +189,7 @@ router.get("/catalog/:id", async (req, res) => {
         tags: product.tags,
         images: product.images,
         userId: product.userId,
+        shopId: product.shopId,
       };
     });
     res.status(200).json(products);
