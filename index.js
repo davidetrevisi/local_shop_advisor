@@ -5,6 +5,7 @@ var Address = require("./app/models/account").Address;
 var Admin = require("./app/models/account").Admin;
 var Account = require("./app/models/account").Account;
 
+/*
 Address.remove();
 Account.remove()
   .then(() => {
@@ -19,6 +20,7 @@ Account.remove()
   .then(() => {
     console.log("User admin saved successfully");
   });
+*/
 
 app.locals.db = mongoose
   .connect(process.env.DB_URL, {
