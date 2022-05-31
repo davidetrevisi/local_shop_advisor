@@ -196,4 +196,27 @@ router.get("/catalog/:id", tokenChecker, async (req, res) => {
   }
 });
 
+router.get("/shop/:id", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (user_type === "Venditore" || user_type === "Cliente") {
+    let products = await Product.find({ shopId: req.params.id });
+    products = products.map((product) => {
+      return {
+        self: "/api/v2/products/" + product.id,
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        category: product.category,
+        tags: product.tags,
+        images: product.images,
+        userId: product.userId,
+        shopId: product.shopId,
+      };
+    });
+    res.status(200).json(products);
+  }
+});
+
 module.exports = router;
