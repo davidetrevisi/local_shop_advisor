@@ -39,7 +39,7 @@ router.post("", tokenChecker, async (req, res) => {
       tags: req.body.tags,
       images: req.files.map((file) => file.path),
       userId: req.body.userId,
-      shopId: req.body.shopId,
+      //shopId: req.body.shopId,
     });
 
     product = await product.save();
@@ -173,10 +173,10 @@ router.put("/:id", tokenChecker, async (req, res) => {
 
 // Get di tutti i prodotti di un determinato account
 
-router.get("/catalog/:id", async (req, res) => {
+router.get("/catalog/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
-  if (user_type === "Venditore") {
+  if (user_type === "Venditore" || user_type === "Admin") {
     let products = await Product.find({ userId: req.params.id });
     products = products.map((product) => {
       return {
