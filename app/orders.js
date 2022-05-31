@@ -101,7 +101,7 @@ router.get("/catalog/:id",tokenChecker, async (req, res) => {
   router.delete("/:id",tokenChecker, async (req, res) => {
     var user_type = req.userAccount;
 
-    if (user_type === "Admin" || user_type === "Cliente") {
+    if (user_type === "Admin" || user_type === "Cliente" || user_type === "Venditore") {
     let order = await Order.findById(req.params.id).exec();
   
     await order.deleteOne();

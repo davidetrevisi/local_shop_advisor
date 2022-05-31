@@ -8,7 +8,7 @@ const fs = require("fs");
 //const Product = require("./models/product");
 const Cart = require("./models/cart");
 const Product = require("./models/product");
-
+const tokenChecker = require("./tokenChecker");
 router.post("", async (req, res) => {
     const { userId, itemId, note } = req.body;
     let data = null;
@@ -79,8 +79,10 @@ router.post("", async (req, res) => {
     });
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id",tokenChecker, async (req, res) => {
+    var user_type = req.userAccount;
 
+    if (user_type === "Cliente" || user_type === "Admin") {
     let cart = await Cart.findOne({ userId: req.params.id }).populate("items.productId");
     if (cart) {
         console.log(cart)
@@ -100,9 +102,12 @@ router.get("/:id", async (req, res) => {
             data: data
         });    }
 
-});
+}});
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",tokenChecker, async (req, res) => {
+    var user_type = req.userAccount;
+
+    if (user_type === "Cliente" || user_type === "Admin") {
     let cart = await Cart.findOne({userId: req.params.id}).exec();
   
     if (!cart) {
@@ -115,6 +120,6 @@ router.delete("/:id", async (req, res) => {
   
     res.status(204).send();
     console.log("Carrello svuotato");
-  });
+  }});
 
 module.exports = router;
