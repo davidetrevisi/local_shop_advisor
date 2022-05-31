@@ -11,13 +11,16 @@ const Product = require("./models/product");
 const Cart = require("./models/cart");
 const Cliente = require("./models/account").Cliente;
 const Address = require("./models/account").Address;
-router.post("", async (req, res) => {
+
+router.post("",tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (user_type === "Cliente" || user_type === "Admin") {
     const { customerId, status  } = req.body;
     let data = null;
     let cart = await Cart.findOne({ userId: customerId });
     let customer = await Cliente.findById(customerId).populate("shipping_address");
     const product = await Product.findById(cart.items[0].productId);
-    //let address = await Address.findOne(customer.shipping_address);
         const orderData = {
             customerId: customerId,
             items: cart.items,
@@ -35,10 +38,12 @@ router.post("", async (req, res) => {
         message: "Order created successfully!",
         data: data
     });
-});
+}});
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
 
+  if (user_type === "Venditore" || user_type === "Admin" || user_type === "Cliente") {
     let order = await Order.findById(req.params.id).populate("shipping_address");
     res.status(200).json({
         self: "/api/v1/orders/" + order.id,
@@ -51,8 +56,11 @@ router.get("/:id", async (req, res) => {
         sellerId: order.sellerId,
         shipping_address: order.shipping_address,
     });
-});
-router.get("/catalog/:id", async (req, res) => {
+}});
+router.get("/catalog/:id",tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (user_type === "Cliente" || user_type === "Admin" ) {
     let orders = await Order.find({customerId: req.params.id});
     orders = orders.map((order) => {
       return {
@@ -68,8 +76,11 @@ router.get("/catalog/:id", async (req, res) => {
       };
     });
     res.status(200).json(orders);
-  });
-  router.get("/catalogv/:id", async (req, res) => {
+  }});
+  router.get("/catalogv/:id", tokenChecker, async (req, res) => {
+    var user_type = req.userAccount;
+
+    if (user_type === "Venditore" || user_type === "Admin") {
     let orders = await Order.find({sellerId: req.params.id});
     orders = orders.map((order) => {
       return {
@@ -85,18 +96,24 @@ router.get("/catalog/:id", async (req, res) => {
       };
     });
     res.status(200).json(orders);
-  });
+  }});
 
-  router.delete("/:id", async (req, res) => {
+  router.delete("/:id",tokenChecker, async (req, res) => {
+    var user_type = req.userAccount;
+
+    if (user_type === "Admin" || user_type === "Cliente") {
     let order = await Order.findById(req.params.id).exec();
   
     await order.deleteOne();
   
     res.status(204).send();
     console.log("Ordine rimosso correttamente dal catalogo");
-  });
+  }});
 
-  router.put("/:id", async (req, res) => {
+  router.put("/:id", tokenChecker,async (req, res) => {
+    var user_type = req.userAccount;
+
+    if (user_type === "Venditore" || user_type === "Admin") {
     let order = await Order.findByIdAndUpdate(req.params.id, { status: req.body.status });
     let orderId = order.id;
     console.log("Stato dell'ordine modificato correttamente");
@@ -104,5 +121,5 @@ router.get("/catalog/:id", async (req, res) => {
       .location("/api/v1/orders/" + orderId)
       .status(200)
       .send();
-  });
+  }});
 module.exports = router;
