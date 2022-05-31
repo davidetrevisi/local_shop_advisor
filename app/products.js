@@ -196,10 +196,12 @@ router.get("/catalog/:id", tokenChecker, async (req, res) => {
   }
 });
 
+// Get dei prodotti di un negozio
+
 router.get("/shop/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
-  if (user_type === "Venditore" || user_type === "Cliente") {
+  if (user_type === "Venditore" || user_type === "Admin") {
     let products = await Product.find({ shopId: req.params.id });
     products = products.map((product) => {
       return {

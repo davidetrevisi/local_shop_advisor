@@ -93,7 +93,6 @@ router.get("/:id", tokenChecker, async (req, res) => {
       images: shop.images,
       userId: shop.userId,
     });
-    res.status(200).json(shops);
   }
 });
 
