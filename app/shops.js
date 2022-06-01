@@ -38,7 +38,7 @@ router.post("", tokenChecker, async (req, res) => {
       category: req.body.category,
       tags: req.body.tags,
       userId: req.body.userId,
-    //  images: req.files.map((file) => file.path),
+      //  images: req.files.map((file) => file.path),
     });
 
     shop = await shop.save();
@@ -68,7 +68,7 @@ router.get("", tokenChecker, async (req, res) => {
         position: shop.position,
         category: shop.category,
         tags: shop.tags,
-    //    images: shop.images,
+        //    images: shop.images,
         userId: shop.userId,
         id: shop.id,
       };
@@ -82,7 +82,7 @@ router.get("", tokenChecker, async (req, res) => {
 router.get("/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
-  if (user_type === "Venditore" || user_type === "Admin") {
+  if (user_type === "Venditore" || user_type === "Admin" || user_type === "Cliente") {
     let shop = await Shop.findById(req.params.id);
     res.status(200).json({
       self: "/api/v2/shops/" + shop.id,
@@ -91,7 +91,7 @@ router.get("/:id", tokenChecker, async (req, res) => {
       position: shop.position,
       category: shop.category,
       tags: shop.tags,
-    //  images: shop.images,
+      //  images: shop.images,
       userId: shop.userId,
       id: shop.id,
     });
@@ -113,7 +113,7 @@ router.get("/list/:id", tokenChecker, async (req, res) => {
         position: shop.position,
         category: shop.category,
         tags: shop.tags,
-     //   images: shop.images,
+        //   images: shop.images,
         userId: shop.userId,
         id: shop.id,
       };
@@ -163,7 +163,7 @@ router.put("/:id", tokenChecker, async (req, res) => {
       position: req.body.position,
       category: req.body.category,
       tags: req.body.tags,
-     // images: req.files.map((file) => file.path),
+      // images: req.files.map((file) => file.path),
       userId: req.body.userId,
     });
     let shopId = shop.id;
