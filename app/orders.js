@@ -5,7 +5,7 @@ const fs = require("fs");
 
 // Importo il modello del prodotto dalla cartella models
 
-const Order = require("./models/order");
+const Order = require("./models/order").Order;
 const Product = require("./models/product");
 const Cart = require("./models/cart").Cart;
 const Cliente = require("./models/account").Cliente;
@@ -66,6 +66,7 @@ router.get("/:id", tokenChecker, async (req, res) => {
     });
   }
 });
+
 router.get("/catalog/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
@@ -87,6 +88,7 @@ router.get("/catalog/:id", tokenChecker, async (req, res) => {
     res.status(200).json(orders);
   }
 });
+
 router.get("/catalogv/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
@@ -141,4 +143,5 @@ router.put("/:id", tokenChecker, async (req, res) => {
       .send();
   }
 });
+
 module.exports = router;
