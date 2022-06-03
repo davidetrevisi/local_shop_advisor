@@ -6,10 +6,6 @@
   "scripts": {
     "test": "jest"
   },
-  "jest": {
-    "verbose": true,
-    "collectCoverage": true
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/davidetrevisi/local_shop_advisor.git"
