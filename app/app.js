@@ -42,7 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Parte statica del frontend
 
-app.use("/", express.static(process.env.FRONTEND));
+app.use("/", express.static(process.env.FRONTEND || 'static'));
 app.use("/images", express.static("./images"));
 
 // Routing delle risorse con il versioning delle API
