@@ -22,6 +22,8 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Product"
+        401:
+          description: Errore nel GET dei prodotti
         404:
           description: Error not found
     post:
@@ -57,7 +59,9 @@ paths:
                 - images//image.jpg
                 - images//image2.jpg
               userId: 12345
-              shopId: 12345
+              shopId: 123456
+        401:
+          description: Errore nell'aggiunta prodotto
         404:
           description: Error not found
   /products/{productId}:
@@ -74,6 +78,8 @@ paths:
           description: Risposta elaborata correttamente
           schema:
             $ref: "#/definitions/Product"
+        401:
+          description: Errore nel GET del singolo prodotto
         404:
           description: Error not found
     delete:
@@ -93,6 +99,8 @@ paths:
           description: Prodotto rimosso correttamente
         400:
           description: Cannot delete images
+        401:
+          description: Product not found
         404:
           description: Error not found
     put:
@@ -118,6 +126,8 @@ paths:
           description: Prodotto modificato correttamente
           schema:
             $ref: "#/definitions/Product"
+        401:
+          description: Errore nel PUT del singolo prodotto
         404:
           description: Error not found
   /products/catalog/{userId}:
@@ -140,6 +150,8 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Product"
+        401:
+          description: Errore nel GET dei prodotti dell'account
         404:
           description: Error not found
   /products/find/{name}:
@@ -156,6 +168,32 @@ paths:
           description: Risposta elaborata correttamente
           schema:
             $ref: "#/definitions/Product"
+        401:
+          description: Errore nel GET del prodotto per nome
+        404:
+          description: Error not found
+  /products/shop/{shopId}:
+    get:
+      summary: Get dei prodotti di un determinato negozio
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: shopId
+          required: true
+          type: string
+          description: L'Id del negozio da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Product"
+        401:
+          description: Errore nel GET dei prodotti del negozio
         404:
           description: Error not found
   /shops:
@@ -173,6 +211,8 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Shop"
+        401:
+          description: Errore nel GET dei negozi
         404:
           description: Error not found
     post:
@@ -208,6 +248,8 @@ paths:
                 - images//image.jpg
                 - images//image2.jpg
               userId: 12345
+        401:
+          description: Errore nell'aggiunta dei negozi
         404:
           description: Error not found
   /shops/list/{userId}:
@@ -230,6 +272,8 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Shop"
+        401:
+          description: Errore nel GET dei negozi di un utente
         404:
           description: Error not found
   /shops/{shopId}:
@@ -250,6 +294,8 @@ paths:
           description: Risposta elaborata correttamente
           schema:
             $ref: "#/definitions/Shop"
+        401:
+          description: Errore nel GET del singolo negozio
         404:
           description: Error not found
     delete:
@@ -269,6 +315,8 @@ paths:
           description: Negozio rimosso correttamente
         400:
           description: Cannot delete images
+        401:
+          description: Shop not found
         404:
           description: Error not found
     put:
@@ -294,6 +342,8 @@ paths:
           description: Negozio modificato correttamente
           schema:
             $ref: "#/definitions/Shop"
+        401:
+          description: Errore nel PUT del singolo negozio
         404:
           description: Error not found
   /carts:
@@ -316,16 +366,20 @@ paths:
             $ref: "#/definitions/Cart"
           examples:
             application/json:
-              userId: 3232445
+              userId: 32423f3
               items:
-                productId: 32423f3
-                quantity: 5
-                price: 16
-                total: 80
-              subTotal: 80
+                - productId: 12345
+                  quantity: 2
+                  price: 10
+                  total: 20
+                - productId: 123456
+                  quantity: 1
+                  price: 10
+                  total: 10
+              subTotal: 30
   /carts/{userId}:
     get:
-      summary: Visualizzazione prodotti nel carrello
+      summary: Visualizzazione prodotti nel carrello | Creazione carrello
       parameters:
         - in: header
           name: token
@@ -335,29 +389,207 @@ paths:
           name: userId
           required: true
           type: string
+          description: L'id dell'utente da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente | Cart created!
+          schema:
+            $ref: "#/definitions/Cart"
+    delete:
+      summary: Svuotamento carrello
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+          description: L'id dell'utente da cercare
+      responses:
+        204:
+          description: Carrello svuotato
+        400:
+          description: Cannot delete images
+        401:
+          description: Cart not found
+        404:
+          description: Error not found
+  /orders:
+    post:
+      summary: Creazione di un nuovo ordine
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: body
+          name: customerId, status
+          required: true
+          description: L'id del cliente che ordina e lo stato dell'ordine
+          schema:
+            type: string
+      responses:
+        201:
+          description: Order created successfully!
+          schema:
+            $ref: "#/definitions/Order"
+          examples:
+            application/json:
+              customerId: 12345
+            items:
+              - productId: 12345
+                quantity: 2
+                price: 10
+                total: 20
+              - productId: 123456
+                quantity: 1
+                price: 10
+                total: 10
+            subTotal: 0
+            sellerId: 123456
+            status: "Spedito"
+            payment: "Carta"
+            shipping_address:
+              _id: 12345
+              city: Trento
+              CAP: 31000
+              street: Via di Prova
+              number: 10
+        401:
+          description: Errore nel GET del prodotto
+        402:
+          description: Errore nel GET del cliente
+        403:
+          description: Errore nel GET del carrello dell'utente
+        404:
+          description: Error not found
+  /orders/{orderId}:
+    get:
+      summary: Get di un singolo ordine
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: orderId
+          required: true
+          type: string
+          description: L'id dell'ordine da cercare
       responses:
         200:
           description: Risposta elaborata correttamente
           schema:
-            $ref: "#/definitions/Cart"
-          examples:
-            application/json:
-              userId: 3232445
-              items:
-                productId: 32423f3
-                quantity: 5
-                price: 16
-                total: 80
-              subTotal: 80
+            $ref: "#/definitions/Order"
+        401:
+          description: Errore nel GET del singolo ordine
+        404:
+          description: Error not found
+    delete:
+      summary: Eliminazione ordine
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: orderId
+          required: true
+          type: string
+          description: L'id dell'ordine da cercare
+      responses:
+        204:
+          description: Ordine rimosso correttamente
+        401:
+          description: Order not found
+        404:
+          description: Error not found
+    put:
+      summary: Modifica di un ordine
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: orderId
+          required: true
+          type: string
+          description: L'id dell'ordine da modificare
+        - in: body
+          name: status
+          required: true
+          description: Il nuovo valore dello stato dell'ordine
+          schema:
+            $ref: "#/definitions/Order"
+      responses:
+        200:
+          description: Stato dell'ordine modificato correttamente
+          schema:
+            $ref: "#/definitions/Order"
+        401:
+          description: Errore nel PUT dell'ordine
+        404:
+          description: Error not found
+  /orders/catalog/{customerId}:
+    get:
+      summary: Get degli ordini di un cliente
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: customerId
+          required: true
+          type: string
+          description: L'id del cliente da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Order"
+        401:
+          description: Errore nel GET degli ordini del cliente
+        404:
+          description: Error not found
+  /orders/catalogv/{sellerId}:
+    get:
+      summary: Get degli ordini di un venditore
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: sellerId
+          required: true
+          type: string
+          description: L'id del venditore da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Order"
+        401:
+          description: Errore nel GET degli ordini del venditore
+        404:
+          description: Error not found
   /authentications/login:
     post:
       summary: Login all'applicazione
       parameters:
         - in: body
-          name: credentials
+          name: email, password
           required: true
           schema:
-            $ref: "#/definitions/Account"
+            type: string
       responses:
         201:
           description: Login effettuato correttamente
@@ -365,6 +597,10 @@ paths:
             token:
               type: string
               description: Token contenente le informazioni di login.
+        401:
+          description: Authentication failed. User not found.
+        402:
+          description: Authentication failed. Wrong password.
         404:
           description: Error not found
   /authentications/logout:
@@ -377,7 +613,7 @@ paths:
           type: string
       responses:
         200:
-          description: Logout effettuato correttamente
+          description: Successfully logged out
         404:
           description: Error not found
   /authentications/signup:
@@ -385,10 +621,11 @@ paths:
       summary: Creazione account cliente (venditore è lo stesso ma cambiano i parametri)
       parameters:
         - in: body
-          name: user
+          name: account, user
           required: true
-          description: Creazione account cliente (venditore è lo stesso ma cambiano i parametri)
+          description: Tipologia di account da creare (Venditore o Cliente) e parametri corrispondenti
           schema:
+            type: string
             $ref: "#/definitions/Cliente"
       responses:
         201:
@@ -408,6 +645,8 @@ paths:
               payment: PayPal
         400:
           description: Errore nell'aggiunta utente
+        401:
+          description: Account già esistente
         404:
           description: Error not found
   /authentications/users:
@@ -425,11 +664,13 @@ paths:
             type: array
             items:
               $ref: "#/definitions/Account"
+        401:
+          description: Errore nel GET degli utenti
         404:
           description: Error not found
   /authentications/user/{userId}:
     get:
-      summary: Get di un singolo utente (Cliente come esempio, ma è lo stesso per il Venditore)
+      summary: Get di un singolo utente (Cliente come esempio, ma è lo stesso per gli altri tipi di account)
       parameters:
         - in: header
           name: token
@@ -443,7 +684,9 @@ paths:
         200:
           description: Risposta elaborata correttamente
           schema:
-              $ref: "#/definitions/Cliente"
+            $ref: "#/definitions/Cliente"
+        401:
+          description: Errore nel GET del singolo utente
         404:
           description: Error not found
     delete:
@@ -460,6 +703,8 @@ paths:
       responses:
         204:
           description: Account rimosso correttamente
+        401:
+          description: User not found
         404:
           description: Error not found
 definitions:
@@ -507,7 +752,7 @@ definitions:
         - images//image.jpg
         - images//image2.jpg
       userId: 12345
-      shopId: 12345
+      shopId: 123456
   Shop:
     type: object
     properties:
@@ -562,8 +807,8 @@ definitions:
     example:
       productId: 32423f3
       quantity: 5
-      price: 16
-      total: 80
+      price: 10
+      total: 50
   Cart:
     type: object
     properties:
@@ -579,9 +824,15 @@ definitions:
     example:
       userId: 32423f3
       items:
-        - 231432fwd45
-        - 12345
-      quantity: 0
+        - productId: 12345
+          quantity: 2
+          price: 10
+          total: 20
+        - productId: 123456
+          quantity: 1
+          price: 10
+          total: 10
+      subTotal: 30
   Address:
     type: object
     properties:
@@ -716,3 +967,39 @@ definitions:
       phone: 30000
       birthdate: "2017-07-21T17:32:28Z"
       shipping_address: 12345678
+  Order:
+    type: object
+    properties:
+      customerId:
+        type: string
+      items:
+        type: array
+        items:
+          type: object
+      subTotal:
+        type: number
+        default: 0
+      sellerId:
+        type: string
+      status:
+        type: string
+      payment:
+        type: string
+      shipping_address:
+        type: string
+    example:
+      customerId: 12345
+      items:
+        - productId: 12345
+          quantity: 2
+          price: 10
+          total: 20
+        - productId: 123456
+          quantity: 1
+          price: 10
+          total: 10
+      subTotal: 0
+      sellerId: 123456
+      status: "Spedito"
+      payment: "Carta"
+      shipping_address: 12345
