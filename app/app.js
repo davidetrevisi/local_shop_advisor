@@ -16,7 +16,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["https://davidetrevisi.github.io"],
+    origin: "*",
     credentials: true,
   })
 );
