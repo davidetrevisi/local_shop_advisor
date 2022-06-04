@@ -125,7 +125,7 @@ router.delete("/:id", tokenChecker, async (req, res) => {
     let cart = await Cart.findOne({ userId: req.params.id }).exec();
 
     if (!cart) {
-      res.status(404).send();
+      res.status(401).send();
       console.log("Cart not found");
       return;
     }

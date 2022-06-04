@@ -21,7 +21,7 @@ router.post("/login", async function (req, res) {
 
   // user not found
   if (!user) {
-    res.json({
+    res.status(401).json({
       success: false,
       message: "Authentication failed. User not found.",
     });
@@ -30,7 +30,7 @@ router.post("/login", async function (req, res) {
   if (user) {
     // check if password matches
     if (user.password != req.body.password) {
-      res.json({
+      res.status(402).json({
         success: false,
         message: "Authentication failed. Wrong password.",
       });
@@ -71,109 +71,120 @@ router.post("/login", async function (req, res) {
 router.post("/signup", async function (req, res) {
   var user_type = JSON.stringify(req.body.account);
 
-  if (user_type.toLowerCase().indexOf("cliente") === 1) {
-    let shipping_address = await Address.findOne({
-      city: req.body.shipping_city,
-      CAP: req.body.shipping_CAP,
-      street: req.body.shipping_street,
-      number: req.body.shipping_number,
-    });
+  let existing = await Account.findOne({
+    email: req.body.email,
+  });
 
-    if (!shipping_address) {
-      var shipping_address_schema = new Address({
+  if (!existing) {
+    if (user_type.toLowerCase().indexOf("cliente") === 1) {
+      let shipping_address = await Address.findOne({
         city: req.body.shipping_city,
         CAP: req.body.shipping_CAP,
         street: req.body.shipping_street,
         number: req.body.shipping_number,
       });
 
-      shipping_address_schema = await shipping_address_schema.save();
-      shipping_address = shipping_address_schema;
-    }
+      if (!shipping_address) {
+        var shipping_address_schema = new Address({
+          city: req.body.shipping_city,
+          CAP: req.body.shipping_CAP,
+          street: req.body.shipping_street,
+          number: req.body.shipping_number,
+        });
 
-    let billing_address = await Address.findOne({
-      city: req.body.billing_city,
-      CAP: req.body.billing_CAP,
-      street: req.body.billing_street,
-      number: req.body.billing_number,
-    });
+        shipping_address_schema = await shipping_address_schema.save();
+        shipping_address = shipping_address_schema;
+      }
 
-    if (!billing_address) {
-      var billing_address_schema = new Address({
+      let billing_address = await Address.findOne({
         city: req.body.billing_city,
         CAP: req.body.billing_CAP,
         street: req.body.billing_street,
         number: req.body.billing_number,
       });
 
-      billing_address_schema = await billing_address_schema.save();
-      billing_address = billing_address_schema;
-    }
+      if (!billing_address) {
+        var billing_address_schema = new Address({
+          city: req.body.billing_city,
+          CAP: req.body.billing_CAP,
+          street: req.body.billing_street,
+          number: req.body.billing_number,
+        });
 
-    var user = new Cliente({
-      email: req.body.email,
-      password: req.body.password,
-      name: req.body.name,
-      surname: req.body.surname,
-      phone: req.body.phone,
-      birthdate: req.body.birthdate,
-      payment: req.body.payment,
-      shipping_address: shipping_address.id,
-      billing_address: billing_address.id,
-    });
+        billing_address_schema = await billing_address_schema.save();
+        billing_address = billing_address_schema;
+      }
 
-    user = await user.save();
+      var user = new Cliente({
+        email: req.body.email,
+        password: req.body.password,
+        name: req.body.name,
+        surname: req.body.surname,
+        phone: req.body.phone,
+        birthdate: req.body.birthdate,
+        payment: req.body.payment,
+        shipping_address: shipping_address.id,
+        billing_address: billing_address.id,
+      });
 
-    console.log("Utente aggiunto correttamente");
-    res
-      .location("/api/v2/authentications/users/" + user.id)
-      .status(201)
-      .send();
-  } else if (user_type.toLowerCase().indexOf("venditore") === 1) {
-    let personal_address = await Address.findOne({
-      city: req.body.personal_city,
-      CAP: req.body.personal_CAP,
-      street: req.body.personal_street,
-      number: req.body.personal_number,
-    });
+      user = await user.save();
 
-    if (!personal_address) {
-      var personal_address_schema = new Address({
+      console.log("Utente aggiunto correttamente");
+      res
+        .location("/api/v2/authentications/users/" + user.id)
+        .status(201)
+        .send();
+    } else if (user_type.toLowerCase().indexOf("venditore") === 1) {
+      let personal_address = await Address.findOne({
         city: req.body.personal_city,
         CAP: req.body.personal_CAP,
         street: req.body.personal_street,
         number: req.body.personal_number,
       });
 
-      personal_address_schema = await personal_address_schema.save();
-      personal_address = personal_address_schema;
+      if (!personal_address) {
+        var personal_address_schema = new Address({
+          city: req.body.personal_city,
+          CAP: req.body.personal_CAP,
+          street: req.body.personal_street,
+          number: req.body.personal_number,
+        });
+
+        personal_address_schema = await personal_address_schema.save();
+        personal_address = personal_address_schema;
+      }
+
+      var user = new Venditore({
+        email: req.body.email,
+        password: req.body.password,
+        name: req.body.name,
+        surname: req.body.surname,
+        phone: req.body.phone,
+        birthdate: req.body.birthdate,
+        personal_address: personal_address.id,
+      });
+
+      user = await user.save();
+
+      console.log("Utente aggiunto correttamente");
+      res
+        .location("/api/v2/authentications/users/" + user.id)
+        .status(201)
+        .send();
+    } else {
+      console.log("Errore nell'aggiunta utente");
+      res
+        .json({
+          message: "Errore nell'aggiunta utente",
+        })
+        .status(400)
+        .send();
     }
-
-    var user = new Venditore({
-      email: req.body.email,
-      password: req.body.password,
-      name: req.body.name,
-      surname: req.body.surname,
-      phone: req.body.phone,
-      birthdate: req.body.birthdate,
-      personal_address: personal_address.id,
-    });
-
-    user = await user.save();
-
-    console.log("Utente aggiunto correttamente");
-    res
-      .location("/api/v2/authentications/users/" + user.id)
-      .status(201)
-      .send();
   } else {
-    console.log("Errore nell'aggiunta utente");
-    res
-      .json({
-        message: "Errore nell'aggiunta utente",
-      })
-      .status(400)
-      .send();
+    res.status(401).json({
+      success: false,
+      message: "Account già esistente",
+    });
   }
 });
 
@@ -194,18 +205,25 @@ router.get("/users", tokenChecker, async (req, res) => {
       .populate("personal_address")
       .populate("shipping_address")
       .populate("billing_address");
-    console.log(users);
-    users = users.map((user) => {
-      return {
-        self: "/api/v2/authentication/users/" + user.id,
-        name: user.name,
-        surname: user.surname,
-        email: user.email,
-        password: user.password,
-        account: user.__t,
-      };
-    });
-    res.status(200).json(users);
+    if (users) {
+      console.log(users);
+      users = users.map((user) => {
+        return {
+          self: "/api/v2/authentication/users/" + user.id,
+          name: user.name,
+          surname: user.surname,
+          email: user.email,
+          password: user.password,
+          account: user.__t,
+        };
+      });
+      res.status(200).json(users);
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Errore nel GET degli utenti",
+      });
+    }
   }
 });
 
@@ -216,38 +234,44 @@ router.get("/users/:id", tokenChecker, async (req, res) => {
     .populate("personal_address")
     .populate("shipping_address")
     .populate("billing_address");
-
-  if (req.userAccount == "Venditore") {
-    res.status(200).json({
-      self: "/api/v2/authentications/users/" + user.id,
-      email: user.email,
-      password: user.password,
-      name: user.name,
-      surname: user.surname,
-      phone: user.phone,
-      birthdate: user.birthdate,
-      personal_address: user.personal_address,
-    });
-  } else if (req.userAccount == "Cliente") {
-    res.status(200).json({
-      self: "/api/v2/authentications/users/" + user.id,
-      email: user.email,
-      password: user.password,
-      name: user.name,
-      surname: user.surname,
-      phone: user.phone,
-      birthdate: user.birthdate,
-      payment: user.payment,
-      shipping_address: user.shipping_address,
-      billing_address: user.billing_address,
-    });
+  if (user) {
+    if (req.userAccount == "Venditore") {
+      res.status(200).json({
+        self: "/api/v2/authentications/users/" + user.id,
+        email: user.email,
+        password: user.password,
+        name: user.name,
+        surname: user.surname,
+        phone: user.phone,
+        birthdate: user.birthdate,
+        personal_address: user.personal_address,
+      });
+    } else if (req.userAccount == "Cliente") {
+      res.status(200).json({
+        self: "/api/v2/authentications/users/" + user.id,
+        email: user.email,
+        password: user.password,
+        name: user.name,
+        surname: user.surname,
+        phone: user.phone,
+        birthdate: user.birthdate,
+        payment: user.payment,
+        shipping_address: user.shipping_address,
+        billing_address: user.billing_address,
+      });
+    } else {
+      res.status(200).json({
+        self: "/api/v2/authentications/users/" + user.id,
+        email: user.email,
+        password: user.password,
+        name: user.name,
+        surname: user.surname,
+      });
+    }
   } else {
-    res.status(200).json({
-      self: "/api/v2/authentications/users/" + user.id,
-      email: user.email,
-      password: user.password,
-      name: user.name,
-      surname: user.surname,
+    res.status(401).json({
+      success: false,
+      message: "Errore nel GET del singolo utente",
     });
   }
 });
@@ -260,13 +284,13 @@ router.delete("/users/:id", tokenChecker, async (req, res) => {
     var temp_user = user;
 
     if (!user) {
-      res.status(404).send();
+      res.status(401).send();
       console.log("User not found");
       return;
     }
 
     await user.deleteOne();
-
+    let temp_addr;
     if (temp_user.__t == "Cliente") {
       let other_users = await Cliente.find({
         $or: [
@@ -274,8 +298,6 @@ router.delete("/users/:id", tokenChecker, async (req, res) => {
           { billing_address: temp_user.shipping_address },
         ],
       });
-
-      let temp_addr;
 
       if (!other_users) {
         temp_addr = Address.findByIdAndDelete(temp_user.shipping_address);
@@ -297,7 +319,7 @@ router.delete("/users/:id", tokenChecker, async (req, res) => {
       });
 
       if (!other_users) {
-        let temp_addr = Address.findByIdAndDelete(temp_user.personalS_address);
+        temp_addr = Address.findByIdAndDelete(temp_user.personalS_address);
       }
     }
 

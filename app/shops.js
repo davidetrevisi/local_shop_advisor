@@ -41,15 +41,22 @@ router.post("", tokenChecker, async (req, res) => {
       images: req.files.map((file) => file.path),
     });
 
-    shop = await shop.save();
+    if (shop) {
+      shop = await shop.save();
 
-    let shopId = shop.id;
+      let shopId = shop.id;
 
-    console.log("Negozio creato correttamente");
-    res
-      .location("/api/v2/shops/" + shopId)
-      .status(201)
-      .send();
+      console.log("Negozio creato correttamente");
+      res
+        .location("/api/v2/shops/" + shopId)
+        .status(201)
+        .send();
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Errore nell'aggiunta dei negozi",
+      });
+    }
   }
 });
 
@@ -60,8 +67,43 @@ router.get("", tokenChecker, async (req, res) => {
 
   if (user_type === "Venditore" || user_type === "Admin") {
     let shops = await Shop.find({});
-    shops = shops.map((shop) => {
-      return {
+    if (shops) {
+      shops = shops.map((shop) => {
+        return {
+          self: "/api/v2/shops/" + shop.id,
+          name: shop.name,
+          description: shop.description,
+          position: shop.position,
+          category: shop.category,
+          tags: shop.tags,
+          images: shop.images,
+          userId: shop.userId,
+          id: shop.id,
+        };
+      });
+      res.status(200).json(shops);
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Errore nel GET dei negozi",
+      });
+    }
+  }
+});
+
+// Get singolo negozio
+
+router.get("/:id", tokenChecker, async (req, res) => {
+  var user_type = req.userAccount;
+
+  if (
+    user_type === "Venditore" ||
+    user_type === "Admin" ||
+    user_type === "Cliente"
+  ) {
+    let shop = await Shop.findById(req.params.id);
+    if (shop) {
+      res.status(200).json({
         self: "/api/v2/shops/" + shop.id,
         name: shop.name,
         description: shop.description,
@@ -71,30 +113,13 @@ router.get("", tokenChecker, async (req, res) => {
         images: shop.images,
         userId: shop.userId,
         id: shop.id,
-      };
-    });
-    res.status(200).json(shops);
-  }
-});
-
-// Get singolo negozio
-
-router.get("/:id", tokenChecker, async (req, res) => {
-  var user_type = req.userAccount;
-
-  if (user_type === "Venditore" || user_type === "Admin" || user_type === "Cliente") {
-    let shop = await Shop.findById(req.params.id);
-    res.status(200).json({
-      self: "/api/v2/shops/" + shop.id,
-      name: shop.name,
-      description: shop.description,
-      position: shop.position,
-      category: shop.category,
-      tags: shop.tags,
-      images: shop.images,
-      userId: shop.userId,
-      id: shop.id,
-    });
+      });
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Errore nel GET del singolo negozio",
+      });
+    }
   }
 });
 
@@ -105,20 +130,27 @@ router.get("/list/:id", tokenChecker, async (req, res) => {
 
   if (user_type === "Venditore" || user_type === "Admin") {
     let shops = await Shop.find({ userId: req.params.id });
-    shops = shops.map((shop) => {
-      return {
-        self: "/api/v2/shops/" + shop.id,
-        name: shop.name,
-        description: shop.description,
-        position: shop.position,
-        category: shop.category,
-        tags: shop.tags,
-        images: shop.images,
-        userId: shop.userId,
-        id: shop.id,
-      };
-    });
-    res.status(200).json(shops);
+    if (shops) {
+      shops = shops.map((shop) => {
+        return {
+          self: "/api/v2/shops/" + shop.id,
+          name: shop.name,
+          description: shop.description,
+          position: shop.position,
+          category: shop.category,
+          tags: shop.tags,
+          images: shop.images,
+          userId: shop.userId,
+          id: shop.id,
+        };
+      });
+      res.status(200).json(shops);
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Errore nel GET dei negozi di un utente",
+      });
+    }
   }
 });
 
@@ -131,14 +163,15 @@ router.delete("/:id", tokenChecker, async (req, res) => {
     let shop = await Shop.findById(req.params.id).exec();
 
     if (!shop) {
-      res.status(404).send();
+      res.status(401).send();
       console.log("Shop not found");
       return;
     }
 
     deleteFiles(shop.images, function (err) {
       if (err) {
-        console.log(err);
+        res.status(400).send();
+        console.log("Cannot delete images");
       } else {
         console.log("All images removed");
       }
@@ -166,12 +199,19 @@ router.put("/:id", tokenChecker, async (req, res) => {
       images: req.files.map((file) => file.path),
       userId: req.body.userId,
     });
-    let shopId = shop.id;
-    console.log("Negozio modificato correttamente");
-    res
-      .location("/api/v2/shops/" + shopId)
-      .status(200)
-      .send();
+    if (shop) {
+      let shopId = shop.id;
+      console.log("Negozio modificato correttamente");
+      res
+        .location("/api/v2/shops/" + shopId)
+        .status(200)
+        .send();
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Errore nel PUT del singolo negozio",
+      });
+    }
   }
 });
 

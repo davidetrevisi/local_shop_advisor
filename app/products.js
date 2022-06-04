@@ -42,16 +42,22 @@ router.post("", tokenChecker, async (req, res) => {
       shopId: req.body.shopId,
     });
 
-    product = await product.save();
+    if (product) {
+      product = await product.save();
+      let productId = product.id;
 
-    let productId = product.id;
-
-    console.log("Prodotto aggiunto correttamente al catalogo");
-    console.log(productId);
-    res
-      .location("/api/v2/products/" + productId)
-      .status(201)
-      .send();
+      console.log("Prodotto aggiunto correttamente al catalogo");
+      console.log(productId);
+      res
+        .location("/api/v2/products/" + productId)
+        .status(201)
+        .send();
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Errore nell'aggiunta prodotto",
+      });
+    }
   }
 });
 
@@ -59,8 +65,36 @@ router.post("", tokenChecker, async (req, res) => {
 
 router.get("", async (req, res) => {
   let products = await Product.find({});
-  products = products.map((product) => {
-    return {
+  if (products) {
+    products = products.map((product) => {
+      return {
+        self: "/api/v2/products/" + product.id,
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        category: product.category,
+        tags: product.tags,
+        images: product.images,
+        userId: product.userId,
+        shopId: product.shopId,
+      };
+    });
+    res.status(200).json(products);
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "Errore nel GET dei prodotti",
+    });
+  }
+});
+
+// Get singolo prodotto
+
+router.get("/:id", async (req, res) => {
+  let product = await Product.findById(req.params.id);
+  if (product) {
+    res.status(200).json({
       self: "/api/v2/products/" + product.id,
       id: product.id,
       name: product.name,
@@ -71,27 +105,13 @@ router.get("", async (req, res) => {
       images: product.images,
       userId: product.userId,
       shopId: product.shopId,
-    };
-  });
-  res.status(200).json(products);
-});
-
-// Get singolo prodotto
-
-router.get("/:id", async (req, res) => {
-  let product = await Product.findById(req.params.id);
-  res.status(200).json({
-    self: "/api/v2/products/" + product.id,
-    id: product.id,
-    name: product.name,
-    description: product.description,
-    price: product.price,
-    category: product.category,
-    tags: product.tags,
-    images: product.images,
-    userId: product.userId,
-    shopId: product.shopId,
-  });
+    });
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "Errore nel GET del singolo prodotto",
+    });
+  }
 });
 
 // Eliminazione di un prodotto
@@ -103,7 +123,7 @@ router.delete("/:id", tokenChecker, async (req, res) => {
     let product = await Product.findById(req.params.id).exec();
 
     if (!product) {
-      res.status(404).send();
+      res.status(401).send();
       console.log("Product not found");
       return;
     }
@@ -128,21 +148,28 @@ router.delete("/:id", tokenChecker, async (req, res) => {
 
 router.get("/find/:name", async (req, res) => {
   let products = await Product.find({ name: req.params.name });
-  products = products.map((product) => {
-    return {
-      self: "/api/v2/products/" + product.id,
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      category: product.category,
-      tags: product.tags,
-      images: product.images,
-      userId: product.userId,
-      shopId: product.shopId,
-    };
-  });
-  res.status(200).json(products);
+  if (products) {
+    products = products.map((product) => {
+      return {
+        self: "/api/v2/products/" + product.id,
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        category: product.category,
+        tags: product.tags,
+        images: product.images,
+        userId: product.userId,
+        shopId: product.shopId,
+      };
+    });
+    res.status(200).json(products);
+  } else {
+    res.status(401).json({
+      success: false,
+      message: "Errore nel GET del prodotto per nome",
+    });
+  }
 });
 
 //Modifica di un prodotto
@@ -161,13 +188,20 @@ router.put("/:id", tokenChecker, async (req, res) => {
       userId: req.body.userId,
       shopId: req.body.shopId,
     });
-    let productId = product.id;
-    console.log("Prodotto modificato correttamente");
-    console.log(productId);
-    res
-      .location("/api/v2/products/" + productId)
-      .status(200)
-      .send();
+    if (product) {
+      let productId = product.id;
+      console.log("Prodotto modificato correttamente");
+      console.log(productId);
+      res
+        .location("/api/v2/products/" + productId)
+        .status(200)
+        .send();
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Errore nel PUT del singolo prodotto",
+      });
+    }
   }
 });
 
@@ -178,21 +212,28 @@ router.get("/catalog/:id", tokenChecker, async (req, res) => {
 
   if (user_type === "Venditore" || user_type === "Admin") {
     let products = await Product.find({ userId: req.params.id });
-    products = products.map((product) => {
-      return {
-        self: "/api/v2/products/" + product.id,
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        category: product.category,
-        tags: product.tags,
-        images: product.images,
-        userId: product.userId,
-        shopId: product.shopId,
-      };
-    });
-    res.status(200).json(products);
+    if (products) {
+      products = products.map((product) => {
+        return {
+          self: "/api/v2/products/" + product.id,
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          category: product.category,
+          tags: product.tags,
+          images: product.images,
+          userId: product.userId,
+          shopId: product.shopId,
+        };
+      });
+      res.status(200).json(products);
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Errore nel GET dei prodotti dell'account",
+      });
+    }
   }
 });
 
@@ -201,23 +242,34 @@ router.get("/catalog/:id", tokenChecker, async (req, res) => {
 router.get("/shop/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
 
-  if (user_type === "Venditore" || user_type === "Admin" || user_type === "Cliente") {
+  if (
+    user_type === "Venditore" ||
+    user_type === "Admin" ||
+    user_type === "Cliente"
+  ) {
     let products = await Product.find({ shopId: req.params.id });
-    products = products.map((product) => {
-      return {
-        self: "/api/v2/products/" + product.id,
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        category: product.category,
-        tags: product.tags,
-        images: product.images,
-        userId: product.userId,
-        shopId: product.shopId,
-      };
-    });
-    res.status(200).json(products);
+    if (products) {
+      products = products.map((product) => {
+        return {
+          self: "/api/v2/products/" + product.id,
+          id: product.id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          category: product.category,
+          tags: product.tags,
+          images: product.images,
+          userId: product.userId,
+          shopId: product.shopId,
+        };
+      });
+      res.status(200).json(products);
+    } else {
+      res.status(401).json({
+        success: false,
+        message: "Errore nel GET dei prodotti del negozio",
+      });
+    }
   }
 });
 
