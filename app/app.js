@@ -15,7 +15,9 @@ const authentications = require("./authentications.js");
 app.use(cookieParser());
 
 app.use(
-  cors()
+  cors({
+    origin: ["https://davidetrevisi.github.io"],
+  })
 );
 
 app.use(function (req, res, next) {
