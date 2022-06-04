@@ -16,16 +16,10 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["https://davidetrevisi.github.io/"],
+    origin: ["*"],
     credentials: true,
   })
 );
-
-app.use(function(res, next) {
-  res.header("Access-Control-Allow-Origin", "https://davidetrevisi.github.io");
-  //res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  //next();
-});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
