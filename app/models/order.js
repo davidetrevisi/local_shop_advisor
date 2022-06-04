@@ -6,7 +6,8 @@ const Address = require("./account");
 let ItemSchema = new Schema(
   {
     productId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product",
     },
     quantity: {
       type: Number,
