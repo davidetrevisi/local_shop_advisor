@@ -16,9 +16,8 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["https://local-shop-advisor.herokuapp.com"],
+    origin: '*',
     credentials: true,
-    //exposedHeaders: ["set-cookie"],
   })
 );
 
