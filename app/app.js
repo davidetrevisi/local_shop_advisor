@@ -14,12 +14,12 @@ const authentications = require("./authentications.js");
 
 app.use(cookieParser());
 
-app.use(
+/*app.use(
   cors({
     origin: ["http://localhost:3000", "http://davidetrevisi.github.io"],
     credentials: true,
   })
-);
+);*/
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
