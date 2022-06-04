@@ -13,7 +13,7 @@ app.locals.db = mongoose
   })
   .then(() => {
     console.log("Connected to Database");
-    app.listen(8080, () => {
+    app.listen(process.env.PORT, () => {
       console.log(`Server listening`);
     });
   });
