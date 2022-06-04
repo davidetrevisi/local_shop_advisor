@@ -74,11 +74,15 @@ router.get("/:id", tokenChecker, async (req, res) => {
     let order = await Order.findById(req.params.id).populate(
       "shipping_address"
     );
+    let orderitems = await Order.findById(req.params.id).populate(
+      "items.productId"
+    );
+
     if (order) {
       res.status(200).json({
         self: "/api/v2/orders/" + order.id,
         customerId: order.customerId,
-        items: order.items,
+        items: orderitems.items,
         subTotal: order.subTotal,
         status: order.status,
         id: order.id,
