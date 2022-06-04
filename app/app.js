@@ -15,10 +15,7 @@ const authentications = require("./authentications.js");
 app.use(cookieParser());
 
 app.use(
-  cors({
-    //origin: "http://davidetrevisi.github.io",
-    //credentials: true,
-  })
+  cors()
 );
 
 app.use(function (req, res, next) {
@@ -30,14 +27,14 @@ app.use(function (req, res, next) {
      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
 
 //     // Request headers you wish to allow
-     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-type');
 
 //     // Set to true if you need the website to include cookies in the requests sent
 //     // to the API (e.g. in case you use sessions)
      res.setHeader('Access-Control-Allow-Credentials', true);
 
 //     // Pass to next layer of middleware
-    next();
+      next();
 });
 
 app.use(express.json());
@@ -45,7 +42,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Parte statica del frontend
 
-//app.use("/", express.static("static"));
+app.use("/", express.static(process.env.FRONTEND));
 app.use("/images", express.static("./images"));
 
 // Routing delle risorse con il versioning delle API
