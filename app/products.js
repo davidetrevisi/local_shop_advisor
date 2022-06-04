@@ -80,6 +80,7 @@ router.get("", async (req, res) => {
         shopId: product.shopId,
       };
     });
+    res.set('Access-Control-Allow-Origin', '*');
     res.status(200).json(products);
   } else {
     res.status(401).json({
