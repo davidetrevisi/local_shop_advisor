@@ -24,7 +24,7 @@ app.use(
 app.use(function(res, next) {
   res.header("Access-Control-Allow-Origin", "https://davidetrevisi.github.io");
   //res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  next();
+  //next();
 });
 
 app.use(express.json());
