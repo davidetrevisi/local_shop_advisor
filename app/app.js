@@ -16,7 +16,7 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: ["https://davidetrevisi.github.io/local_shop_advisor_Hosting"],
+    origin: ["https://davidetrevisi.github.io"],
     credentials: true,
   })
 );
