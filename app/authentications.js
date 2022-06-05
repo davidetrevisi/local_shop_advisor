@@ -61,6 +61,8 @@ router.post("/login", async function (req, res) {
         account: user.__t,
         email: user.email,
         id: user._id,
+        name: user.name,
+        surname: user.surname,
         self: "api/v2/authentication/" + user._id,
       });
     console.log("Token emesso!");
