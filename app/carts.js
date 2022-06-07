@@ -94,7 +94,7 @@ router.get("/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
   let data = null;
   const cartData = {
-    userId: req.userId,
+    userId: req.params.id,
   };
 
   if (user_type === "Cliente" || user_type === "Admin") {
