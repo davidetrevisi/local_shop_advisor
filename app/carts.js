@@ -92,6 +92,10 @@ router.post("", tokenChecker, async (req, res) => {
 
 router.get("/:id", tokenChecker, async (req, res) => {
   var user_type = req.userAccount;
+  let data = null;
+  const cartData = {
+    userId: req.userId,
+  };
 
   if (user_type === "Cliente" || user_type === "Admin") {
     let cart = await Cart.findOne({ userId: req.params.id }).populate(
@@ -107,7 +111,7 @@ router.get("/:id", tokenChecker, async (req, res) => {
         subTotal: cart.subTotal,
       });
     } else {
-      cart = new Cart();
+      cart = new Cart(cartData);
       data = await cart.save();
       res.status(200).send({
         code: 200,
