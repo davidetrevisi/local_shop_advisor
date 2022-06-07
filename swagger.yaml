@@ -2,12 +2,9 @@ swagger: "2.0"
 info:
   version: "1.0"
   title: "Local Shop Advisor"
-  description: Polls is a simple API allowing consumers to view polls and vote in them.
-  license:
-    name: MIT
-    url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
-host: polls.apiblueprint.org
-basePath: /
+  description: Documentazione delle API del progetto del corso di Ingegneria del Software
+host: localhost:8080
+basePath: /api/v2
 schemes:
   - https
 consumes:
@@ -15,106 +12,994 @@ consumes:
 produces:
   - application/json
 paths:
-  /questions:
-    x-summary: Questions Collection
+  /products:
     get:
-      summary: List All Questions
+      summary: Lista di tutti i prodotti
       responses:
         200:
-          description: Successful Response
+          description: Risposta elaborata correttamente
           schema:
             type: array
             items:
-              $ref: "#/definitions/Question"
-          examples:
-            application/json:
-              - question: Favourite programming language?
-                published_at: "2015-08-05T08:40:51.620Z"
-                choices:
-                  - choice: Swift
-                    votes: 2048
-                  - choice: Python
-                    votes: 1024
-                  - choice: Objective-C
-                    votes: 512
-                  - choice: Ruby
-                    votes: 256
+              $ref: "#/definitions/Product"
+        401:
+          description: Errore nel GET dei prodotti
+        404:
+          description: Error not found
     post:
-      description: >-
-        You may create your own question using this action. It takes a JSON
-        object containing a question and a collection of answers in the
-        form of choices.
-      summary: Create a New Question
+      consumes:
+        - multipart/form-data
+      summary: Creazione di un nuovo prodotto
       parameters:
-        - name: body
-          in: body
+        - in: header
+          name: token
           required: true
+          type: string
+        - in: body
+          name: product
+          required: true
+          description: I parametri del prodotto da creare + immagini da caricare
           schema:
-            $ref: "#/definitions/QuestionRequest"
+            $ref: "#/definitions/Product"
       responses:
         201:
-          description: ""
+          description: OK
           schema:
-            $ref: "#/definitions/Question"
+            $ref: "#/definitions/Product"
+          examples:
+            multipart/form-data:
+              name: Felpa
+              description: Una bella felpa
+              price: 10
+              category: Abbigliamento
+              tags:
+                - Abbigliamento
+                - Felpe
+              images:
+                - images//image.jpg
+                - images//image2.jpg
+              userId: 12345
+              shopId: 123456
+        401:
+          description: Errore nell'aggiunta prodotto
+        404:
+          description: Error not found
+  /products/{productId}:
+    get:
+      summary: Get di un singolo prodotto
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          type: string
+          description: L'id del prodotto da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            $ref: "#/definitions/Product"
+        401:
+          description: Errore nel GET del singolo prodotto
+        404:
+          description: Error not found
+    delete:
+      summary: Eliminazione di un singolo prodotto
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: productId
+          required: true
+          type: string
+          description: L'id del prodotto da eliminare
+      responses:
+        204:
+          description: Prodotto rimosso correttamente
+        400:
+          description: Cannot delete images
+        401:
+          description: Product not found
+        404:
+          description: Error not found
+    put:
+      summary: Modifica di un prodotto
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: productId
+          required: true
+          type: string
+          description: L'id del prodotto da modificare
+        - in: body
+          name: product
+          required: true
+          description: I nuovi valori del prodotto da modificare
+          schema:
+            $ref: "#/definitions/Product"
+      responses:
+        200:
+          description: Prodotto modificato correttamente
+          schema:
+            $ref: "#/definitions/Product"
+        401:
+          description: Errore nel PUT del singolo prodotto
+        404:
+          description: Error not found
+  /products/catalog/{userId}:
+    get:
+      summary: Get dei prodotti di un determinato utente
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+          description: L'Id dell'account da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Product"
+        401:
+          description: Errore nel GET dei prodotti dell'account
+        404:
+          description: Error not found
+  /products/find/{name}:
+    get:
+      summary: Ricerca di un prodotto per nome
+      parameters:
+        - in: path
+          name: name
+          required: true
+          type: string
+          description: Il nome del prodotto da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            $ref: "#/definitions/Product"
+        401:
+          description: Errore nel GET del prodotto per nome
+        404:
+          description: Error not found
+  /products/shop/{shopId}:
+    get:
+      summary: Get dei prodotti di un determinato negozio
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: shopId
+          required: true
+          type: string
+          description: L'Id del negozio da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Product"
+        401:
+          description: Errore nel GET dei prodotti del negozio
+        404:
+          description: Error not found
+  /shops:
+    get:
+      summary: Lista di tutti i Negozi
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Shop"
+        401:
+          description: Errore nel GET dei negozi
+        404:
+          description: Error not found
+    post:
+      consumes:
+        - multipart/form-data
+      summary: Creazione di un nuovo negozio
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: body
+          name: shop
+          required: true
+          description: I parametri del negozio da creare + immagini da caricare
+          schema:
+            $ref: "#/definitions/Shop"
+      responses:
+        201:
+          description: OK
+          schema:
+            $ref: "#/definitions/Shop"
+          examples:
+            multipart/form-data:
+              name: Negozio di Felpe
+              description: Bottega a gestione familiare di vendita abbigliamento
+              position: Via Mario Rossi 22, Trento
+              category: Abbigliamento
+              tags:
+                - Abbigliamento
+                - Felpe
+              images:
+                - images//image.jpg
+                - images//image2.jpg
+              userId: 12345
+        401:
+          description: Errore nell'aggiunta dei negozi
+        404:
+          description: Error not found
+  /shops/list/{userId}:
+    get:
+      summary: Get dei negozi di un determinato utente
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+          description: L'id dell'account da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Shop"
+        401:
+          description: Errore nel GET dei negozi di un utente
+        404:
+          description: Error not found
+  /shops/{shopId}:
+    get:
+      summary: Get di un singolo negozio
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: shopId
+          required: true
+          type: string
+          description: L'id del negozio da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            $ref: "#/definitions/Shop"
+        401:
+          description: Errore nel GET del singolo negozio
+        404:
+          description: Error not found
+    delete:
+      summary: Eliminazione di un singolo negozio
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: shopId
+          required: true
+          type: string
+          description: L'id del negozio da eliminare
+      responses:
+        204:
+          description: Negozio rimosso correttamente
+        400:
+          description: Cannot delete images
+        401:
+          description: Shop not found
+        404:
+          description: Error not found
+    put:
+      summary: Modifica di un negozio
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: shopId
+          required: true
+          type: string
+          description: L'id del negozio da modificare
+        - in: body
+          name: shop
+          required: true
+          description: I nuovi valori del negozio da modificare
+          schema:
+            $ref: "#/definitions/Shop"
+      responses:
+        200:
+          description: Negozio modificato correttamente
+          schema:
+            $ref: "#/definitions/Shop"
+        401:
+          description: Errore nel PUT del singolo negozio
+        404:
+          description: Error not found
+  /carts:
+    post:
+      summary: Aggiunta di un prodotto al carrello
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: body
+          name: cart
+          required: true
+          schema:
+            $ref: "#/definitions/Cart"
+      responses:
+        200:
+          description: Add to Cart successfully!
+          schema:
+            $ref: "#/definitions/Cart"
           examples:
             application/json:
-              question: Favourite programming language?
-              published_at: "2015-08-05T08:40:51.620Z"
-              choices:
-                - choice: Swift
-                  votes: 0
-                - choice: Python
-                  votes: 0
-                - choice: Objective-C
-                  votes: 0
-                - choice: Ruby
-                  votes: 0
+              userId: 32423f3
+              items:
+                - productId: 12345
+                  quantity: 2
+                  price: 10
+                  total: 20
+                - productId: 123456
+                  quantity: 1
+                  price: 10
+                  total: 10
+              subTotal: 30
+  /carts/{userId}:
+    get:
+      summary: Visualizzazione prodotti nel carrello | Creazione carrello
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+          description: L'id dell'utente da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente | Cart created!
+          schema:
+            $ref: "#/definitions/Cart"
+    delete:
+      summary: Svuotamento carrello
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+          description: L'id dell'utente da cercare
+      responses:
+        204:
+          description: Carrello svuotato
+        400:
+          description: Cannot delete images
+        401:
+          description: Cart not found
+        404:
+          description: Error not found
+  /orders:
+    post:
+      summary: Creazione di un nuovo ordine
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: body
+          name: customerId, status
+          required: true
+          description: L'id del cliente che ordina e lo stato dell'ordine
+          schema:
+            type: string
+      responses:
+        201:
+          description: Order created successfully!
+          schema:
+            $ref: "#/definitions/Order"
+          examples:
+            application/json:
+              customerId: 12345
+            items:
+              - productId: 12345
+                quantity: 2
+                price: 10
+                total: 20
+              - productId: 123456
+                quantity: 1
+                price: 10
+                total: 10
+            subTotal: 0
+            sellerId: 123456
+            status: "Spedito"
+            payment: "Carta"
+            shipping_address:
+              _id: 12345
+              city: Trento
+              CAP: 31000
+              street: Via di Prova
+              number: 10
+        401:
+          description: Errore nel GET del prodotto
+        402:
+          description: Errore nel GET del cliente
+        403:
+          description: Errore nel GET del carrello dell'utente
+        404:
+          description: Error not found
+  /orders/{orderId}:
+    get:
+      summary: Get di un singolo ordine
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: orderId
+          required: true
+          type: string
+          description: L'id dell'ordine da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            $ref: "#/definitions/Order"
+        401:
+          description: Errore nel GET del singolo ordine
+        404:
+          description: Error not found
+    delete:
+      summary: Eliminazione ordine
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: orderId
+          required: true
+          type: string
+          description: L'id dell'ordine da cercare
+      responses:
+        204:
+          description: Ordine rimosso correttamente
+        401:
+          description: Order not found
+        404:
+          description: Error not found
+    put:
+      summary: Modifica di un ordine
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: orderId
+          required: true
+          type: string
+          description: L'id dell'ordine da modificare
+        - in: body
+          name: status
+          required: true
+          description: Il nuovo valore dello stato dell'ordine
+          schema:
+            $ref: "#/definitions/Order"
+      responses:
+        200:
+          description: Stato dell'ordine modificato correttamente
+          schema:
+            $ref: "#/definitions/Order"
+        401:
+          description: Errore nel PUT dell'ordine
+        404:
+          description: Error not found
+  /orders/catalog/{customerId}:
+    get:
+      summary: Get degli ordini di un cliente
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: customerId
+          required: true
+          type: string
+          description: L'id del cliente da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Order"
+        401:
+          description: Errore nel GET degli ordini del cliente
+        404:
+          description: Error not found
+  /orders/catalogv/{sellerId}:
+    get:
+      summary: Get degli ordini di un venditore
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: sellerId
+          required: true
+          type: string
+          description: L'id del venditore da cercare
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Order"
+        401:
+          description: Errore nel GET degli ordini del venditore
+        404:
+          description: Error not found
+  /authentications/login:
+    post:
+      summary: Login all'applicazione
+      parameters:
+        - in: body
+          name: email, password
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Login effettuato correttamente
+          headers:
+            token:
+              type: string
+              description: Token contenente le informazioni di login.
+        401:
+          description: Authentication failed. User not found.
+        402:
+          description: Authentication failed. Wrong password.
+        404:
+          description: Error not found
+  /authentications/logout:
+    get:
+      summary: Logout dall'applicazione
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+      responses:
+        200:
+          description: Successfully logged out
+        404:
+          description: Error not found
+  /authentications/signup:
+    post:
+      summary: Creazione account cliente (venditore è lo stesso ma cambiano i parametri)
+      parameters:
+        - in: body
+          name: account, user
+          required: true
+          description: Tipologia di account da creare (Venditore o Cliente) e parametri corrispondenti
+          schema:
+            type: string
+            $ref: "#/definitions/Cliente"
+      responses:
+        201:
+          description: Utente aggiunto correttamente
+          schema:
+            $ref: "#/definitions/Cliente"
+          examples:
+            application/json:
+              email: cliente@cliente.com
+              password: 123
+              name: Mario
+              surname: Rossi
+              phone: 30000
+              birthdate: "2017-07-21T17:32:28Z"
+              shipping_address: 12345678
+              billing_address: 12345678
+              payment: PayPal
+        400:
+          description: Errore nell'aggiunta utente
+        401:
+          description: Account già esistente
+        404:
+          description: Error not found
+  /authentications/users:
+    get:
+      summary: Lista di tutti gli utenti
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Account"
+        401:
+          description: Errore nel GET degli utenti
+        404:
+          description: Error not found
+  /authentications/user/{userId}:
+    get:
+      summary: Get di un singolo utente (Cliente come esempio, ma è lo stesso per gli altri tipi di account)
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+      responses:
+        200:
+          description: Risposta elaborata correttamente
+          schema:
+            $ref: "#/definitions/Cliente"
+        401:
+          description: Errore nel GET del singolo utente
+        404:
+          description: Error not found
+    delete:
+      summary: Eliminazione di un account
+      parameters:
+        - in: header
+          name: token
+          required: true
+          type: string
+        - in: path
+          name: userId
+          required: true
+          type: string
+      responses:
+        204:
+          description: Account rimosso correttamente
+        401:
+          description: User not found
+        404:
+          description: Error not found
 definitions:
-  Question:
-    title: Question
+  Product:
     type: object
     properties:
-      question:
+      name:
         type: string
-      published_at:
+      description:
         type: string
-      choices:
-        type: array
-        items:
-          $ref: "#/definitions/Choice"
-    required:
-      - question
-      - published_at
-      - choices
-  Choice:
-    title: Choice
-    type: object
-    properties:
-      votes:
-        type: integer
-        format: int32
-      choice:
+      price:
+        type: number
+        minimum: 0
+        maximum: 5000
+      category:
         type: string
-    required:
-      - votes
-      - choice
-  QuestionRequest:
-    title: Question Request
-    type: object
-    properties:
-      question:
-        type: string
-      choices:
+      tags:
         type: array
         items:
           type: string
+      images:
+        type: array
+        items:
+          type: string
+      userId:
+        type: string
+      shopId:
+        type: string
     required:
-      - question
-      - choices
+      - name
+      - description
+      - price
+      - category
+      - userId
+      - shopId
     example:
-      question: Favourite programming language?
-      choices:
-        - Swift
-        - Python
-        - Objective-C
-        - Ruby
+      name: Felpa
+      description: Una bella felpa
+      price: 10
+      category: Abbigliamento
+      tags:
+        - Abbigliamento
+        - Felpe
+      images:
+        - images//image.jpg
+        - images//image2.jpg
+      userId: 12345
+      shopId: 123456
+  Shop:
+    type: object
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      position:
+        type: string
+      category:
+        type: string
+      tags:
+        type: array
+        items:
+          type: string
+      images:
+        type: array
+        items:
+          type: string
+      userId:
+        type: string
+    required:
+      - name
+      - description
+      - position
+      - category
+      - userId
+    example:
+      name: Negozio di Felpe
+      description: Bottega a gestione familiare di vendita abbigliamento
+      position: Via Mario Rossi 22, Trento
+      category: Abbigliamento
+      tags:
+        - Abbigliamento
+        - Felpe
+      images:
+        - images//image.jpg
+        - images//image2.jpg
+      userId: 12345
+  Item:
+    type: object
+    properties:
+      productId:
+        type: string
+      quantity:
+        type: number
+        minimum: 1
+      price:
+        type: number
+      total:
+        type: number
+    example:
+      productId: 32423f3
+      quantity: 5
+      price: 10
+      total: 50
+  Cart:
+    type: object
+    properties:
+      userId:
+        type: string
+      items:
+        type: array
+        items:
+          type: object
+      subTotal:
+        type: number
+        default: 0
+    example:
+      userId: 32423f3
+      items:
+        - productId: 12345
+          quantity: 2
+          price: 10
+          total: 20
+        - productId: 123456
+          quantity: 1
+          price: 10
+          total: 10
+      subTotal: 30
+  Address:
+    type: object
+    properties:
+      city:
+        type: string
+      CAP:
+        type: number
+        minimum: 0
+      street:
+        type: string
+      number:
+        type: number
+        minimum: 0
+    required:
+      - city
+      - CAP
+      - street
+      - number
+    example:
+      city: Trento
+      CAP: 31000
+      street: Via di Prova
+      number: 10
+  Account:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+    required:
+      - email
+      - password
+  Admin:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+      name:
+        type: string
+      surname:
+        type: string
+    required:
+      - email
+      - password
+      - name
+      - surname
+    example:
+      email: admin@admin.com
+      password: admin
+      name: Mario
+      surname: Rossi
+  Cliente:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+      name:
+        type: string
+      surname:
+        type: string
+      phone:
+        type: number
+        minimum: 0
+      birthdate:
+        type: string
+        format: date-time
+        default: Date.now
+      shipping_address:
+        type: string
+      billing_address:
+        type: string
+      payment:
+        type: string
+    required:
+      - email
+      - password
+      - name
+      - surname
+      - birthdate
+    example:
+      email: cliente@cliente.com
+      password: 123
+      name: Mario
+      surname: Rossi
+      phone: 30000
+      birthdate: "2017-07-21T17:32:28Z"
+      shipping_address: 12345678
+      billing_address: 12345678
+      payment: PayPal
+  Venditore:
+    type: object
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+        format: password
+      name:
+        type: string
+      surname:
+        type: string
+      phone:
+        type: number
+        minimum: 0
+      birthdate:
+        type: string
+        format: date-time
+        default: Date.now
+      personal_address:
+        type: string
+    required:
+      - email
+      - password
+      - name
+      - surname
+      - phone
+      - birthdate
+      - personal_address
+    example:
+      email: cliente@cliente.com
+      password: 123
+      name: Mario
+      surname: Rossi
+      phone: 30000
+      birthdate: "2017-07-21T17:32:28Z"
+      shipping_address: 12345678
+  Order:
+    type: object
+    properties:
+      customerId:
+        type: string
+      items:
+        type: array
+        items:
+          type: object
+      subTotal:
+        type: number
+        default: 0
+      sellerId:
+        type: string
+      status:
+        type: string
+      payment:
+        type: string
+      shipping_address:
+        type: string
+    example:
+      customerId: 12345
+      items:
+        - productId: 12345
+          quantity: 2
+          price: 10
+          total: 20
+        - productId: 123456
+          quantity: 1
+          price: 10
+          total: 10
+      subTotal: 0
+      sellerId: 123456
+      status: "Spedito"
+      payment: "Carta"
+      shipping_address: 12345

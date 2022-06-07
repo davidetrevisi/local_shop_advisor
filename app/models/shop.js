@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const Product = require("./product");
 
-// Schema dei prodotti: nome, descrizione, prezzo (0-5000), categoria, tags, immagini
-
-const productSchema = new Schema({
+// nome, posizione, categoria e tag, descrizione e immagini
+const shopSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -12,10 +12,8 @@ const productSchema = new Schema({
     type: String,
     required: true,
   },
-  price: {
-    type: Number,
-    min: 0,
-    max: 5000,
+  position: {
+    type: String,
     required: true,
   },
   category: {
@@ -29,20 +27,12 @@ const productSchema = new Schema({
     ref: "Account",
     required: true,
   },
-  shopId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Shop",
-    required: true,
-  },
-  // Nel caso servano in futuro
-  // comments:
-  // reviews:
 });
 
 // Creo il modello del prodotto dallo schema
 
-const Product = mongoose.model("Product", productSchema);
+const Shop = mongoose.model("Shop", shopSchema);
 
 // Esporto il modello
 
-module.exports = Product;
+module.exports = Shop;
