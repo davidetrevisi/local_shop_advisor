@@ -1,4 +1,4 @@
-# Local Shop Advisor
+Repository del progetto finito del corso di Ingegneria del Software, VI semestre, anno 2022, Ingegneria Informatica, delle Comunicazioni ed Elettronica.
 
 # Sezione introduttiva
 
